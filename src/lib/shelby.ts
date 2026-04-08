@@ -1,7 +1,4 @@
-/**
- * Shelby Protocol SDK wrapper
- * Interacts with @shelby-protocol/sdk
- */
+import { supabase, BUCKET_NAME } from './supabase';
 
 export interface BlobMetadata {
   id: string;
@@ -14,87 +11,90 @@ export interface BlobMetadata {
   likes: number;
   views: number;
   thumbnailUrl?: string;
+  fileUrl?: string; // Real Supabase Storage URL
+  fileSize: number; // In bytes
   isPublic: boolean;
 }
 
-// Initial Mock Data
-const INITIAL_BLOBS: BlobMetadata[] = [
-  {
-    id: "blob_1",
-    title: "Intro to Aptos Move",
-    description: "Learn how to build smart contracts on Aptos.",
-    contentType: "Course",
-    price: 0,
-    creatorAddress: "0x123...abc",
-    timestamp: Date.now() - 86400000,
-    likes: 120,
-    views: 1500,
-    isPublic: true,
-  },
-  {
-    id: "blob_2",
-    title: "Shelby Architecture Diagram",
-    description: "High resolution diagram of the protocol.",
-    contentType: "Image",
-    price: 5,
-    creatorAddress: "0x456...def",
-    timestamp: Date.now() - 172800000,
-    likes: 45,
-    views: 300,
-    isPublic: true,
-  }
-];
-
-// Helper to get blobs from localStorage (Client-side only)
-const getStoredBlobs = (): BlobMetadata[] => {
-  if (typeof window === "undefined") return INITIAL_BLOBS;
-  const stored = localStorage.getItem("shelby_blobs");
-  if (!stored) {
-    localStorage.setItem("shelby_blobs", JSON.stringify(INITIAL_BLOBS));
-    return INITIAL_BLOBS;
-  }
-  return JSON.parse(stored);
-};
-
-// Helper to save blobs
-const saveBlobs = (blobs: BlobMetadata[]) => {
-  if (typeof window !== "undefined") {
-    localStorage.setItem("shelby_blobs", JSON.stringify(blobs));
-  }
-};
-
-export const uploadBlob = async (payload: { data: ArrayBuffer | File, mimeType: string, metadata?: Partial<BlobMetadata> }) => {
-  console.log("Saving to local storage (Mock SDK)", payload);
+export const uploadBlob = async (payload: { data: ArrayBuffer | File, mimeType: string, metadata: Partial<BlobMetadata> }) => {
+  const fileId = `blob_${Date.now()}`;
+  const fileName = `${fileId}.${payload.mimeType.split('/')[1] || 'bin'}`;
   
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  
-  const newBlob: BlobMetadata = {
-    id: `blob_${Date.now()}`,
-    title: payload.metadata?.title || "Untitled",
-    description: payload.metadata?.description || "",
-    contentType: payload.metadata?.contentType || "Other",
-    price: payload.metadata?.price || 0,
-    creatorAddress: payload.metadata?.creatorAddress || "0xUnknown",
+  // 1. Upload to Supabase Storage
+  const { data: uploadData, error: uploadError } = await supabase.storage
+    .from(BUCKET_NAME)
+    .upload(fileName, payload.data, {
+      contentType: payload.mimeType,
+      upsert: true
+    });
+
+  if (uploadError) throw uploadError;
+
+  // 2. Get Public URL
+  const { data: { publicUrl } } = supabase.storage
+    .from(BUCKET_NAME)
+    .getPublicUrl(fileName);
+
+  // 3. Save Metadata to Supabase DB
+  const blobData: BlobMetadata = {
+    id: fileId,
+    title: payload.metadata.title || "Untitled",
+    description: payload.metadata.description || "",
+    contentType: payload.metadata.contentType || "Other",
+    price: payload.metadata.price || 0,
+    creatorAddress: payload.metadata.creatorAddress || "0xUnknown",
     timestamp: Date.now(),
     likes: 0,
     views: 0,
-    isPublic: true,
-    ...payload.metadata
+    thumbnailUrl: payload.metadata.thumbnailUrl || publicUrl, // Default to file itself if no thumb
+    fileUrl: publicUrl,
+    fileSize: (payload.data instanceof File ? payload.data.size : payload.data.byteLength),
+    isPublic: true
   };
 
-  const currentBlobs = getStoredBlobs();
-  saveBlobs([newBlob, ...currentBlobs]);
-  
-  return newBlob;
+  const { error: dbError } = await supabase
+    .from('blobs')
+    .insert([blobData]);
+
+  if (dbError) throw dbError;
+
+  return blobData;
 };
 
 export const listBlobs = async (params: { limit?: number, filter?: any } = {}) => {
-  console.log("Fetching blobs", params);
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  return getStoredBlobs(); 
+  let query = supabase
+    .from('blobs')
+    .select('*')
+    .order('timestamp', { ascending: false });
+
+  if (params.limit) query = query.limit(params.limit);
+  if (params.filter?.creatorAddress) query = query.eq('creatorAddress', params.filter.creatorAddress);
+
+  const { data, error } = await query;
+  if (error) throw error;
+  
+  return data as BlobMetadata[];
 };
 
 export const downloadBlob = async (id: string) => {
-  console.log("Downloading", id);
-  return new ArrayBuffer(0); 
+  // Since we use public URLs, we can just fetch the URL
+  const { data, error } = await supabase
+    .from('blobs')
+    .select('fileUrl')
+    .eq('id', id)
+    .single();
+
+  if (error || !data.fileUrl) throw new Error("File not found");
+  
+  const response = await fetch(data.fileUrl);
+  return await response.arrayBuffer();
+};
+
+export const getStorageUsage = async () => {
+  const { data, error } = await supabase
+    .from('blobs')
+    .select('fileSize');
+    
+  if (error) return 0;
+  return data.reduce((acc, curr) => acc + (curr.fileSize || 0), 0);
 };

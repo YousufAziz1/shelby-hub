@@ -40,6 +40,52 @@ export default function UploadPage() {
   const dropzoneMain = useDropzone({ onDrop: onDropMain, maxFiles: 1 });
   const dropzonePreview = useDropzone({ onDrop: onDropPreview, maxFiles: 1 });
 
+  const generateThumbnail = async (selectedFile: File): Promise<string | undefined> => {
+    return new Promise((resolve) => {
+      if (!selectedFile.type.startsWith('image') && !selectedFile.type.startsWith('video')) {
+        resolve(undefined);
+        return;
+      }
+
+      if (selectedFile.type.startsWith('image')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 400;
+            const scaleSize = MAX_WIDTH / img.width;
+            canvas.width = MAX_WIDTH;
+            canvas.height = img.height * scaleSize;
+            const ctx = canvas.getContext('2d');
+            ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.7));
+          };
+          img.src = e.target?.result as string;
+        };
+        reader.readAsDataURL(selectedFile);
+      } else if (selectedFile.type.startsWith('video')) {
+        const video = document.createElement('video');
+        video.preload = 'metadata';
+        video.muted = true;
+        video.playsInline = true;
+        video.src = URL.createObjectURL(selectedFile);
+        video.onloadeddata = () => {
+          video.currentTime = 1; // Capture at 1 second
+        };
+        video.onseeked = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = 400;
+          canvas.height = (video.videoHeight / video.videoWidth) * 400;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', 0.7));
+          URL.revokeObjectURL(video.src);
+        };
+      }
+    });
+  };
+
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!connected || !account?.address) {
@@ -59,7 +105,9 @@ export default function UploadPage() {
     setError("");
 
     try {
-      // Typically we'd convert File to ArrayBuffer, but the mock supports File/ArrayBuffer.
+      // Generate thumbnail if possible
+      const thumb = await generateThumbnail(previewFile || file);
+
       const buffer = await file.arrayBuffer();
 
       const uploaded = await uploadBlob({
@@ -74,18 +122,18 @@ export default function UploadPage() {
           timestamp: Date.now(),
           likes: 0,
           views: 0,
+          thumbnailUrl: thumb,
           isPublic
         }
       });
 
-      // Here you would optionally mint the NFT representing the Blob ID.
       if (mintNft) {
         console.log(`Minting NFT for Blob ID ${uploaded.id}...`);
-        // Add NFT minting contract call here
       }
 
       setSuccess({ id: uploaded.id });
     } catch (err: any) {
+      console.error(err);
       setError(err?.message || "An unexpected error occurred during upload.");
     } finally {
       setLoading(false);

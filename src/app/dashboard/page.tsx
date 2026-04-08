@@ -22,11 +22,8 @@ export default function DashboardPage() {
       }
       setLoading(true);
       try {
-        const data = await listBlobs();
-        // Since we mock global state, let's pretend ALL blobs belong to creator if connected for demo.
-        // Real implementation: const data = await listBlobs({ filter: { creatorAddress: account.address } })
-        // Let's filter realistically if mock data is used:
-        setMyBlobs(data.filter(b => b.creatorAddress === account.address.toString() || b.creatorAddress.includes("123"))); 
+        const data = await listBlobs({ filter: { creatorAddress: account.address.toString() } });
+        setMyBlobs(data); 
       } catch (err) {
         console.error("Failed to load blobs", err);
       } finally {
