@@ -1,19 +1,25 @@
 import Link from 'next/link';
-import { Card, CardContent, CardFooter, CardHeader } from './ui/card';
+import { Card } from './ui/card';
 import { Badge } from './ui/badge';
-import { Heart, Eye, Image as ImageIcon, Video, Code, FileText, Lock, Share2 } from 'lucide-react';
+import { Heart, Eye, Image as ImageIcon, Video, Code, FileText, Lock, FileArchive, FileJson } from 'lucide-react';
 import { BlobMetadata, recordLike } from '@/lib/shelby';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function FeedCard({ blob: initialBlob }: { blob: BlobMetadata }) {
   const [blob, setBlob] = useState(initialBlob);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   // Resilient property access for Supabase (handles both camelCase and lowercase)
   const thumb = blob.thumbnailUrl || (blob as any).thumbnailurl;
   const cType = blob.contentType || (blob as any).contenttype;
   const cAddress = blob.creatorAddress || (blob as any).creatoraddress;
   
-  const shortAddress = cAddress ? `${cAddress.slice(0, 6)}...${cAddress.slice(-4)}` : "0xUnknown";
+  // Adjusted for "3 at start, 4 at end" (including 0x)
+  const shortAddress = cAddress ? `${cAddress.slice(0, 5)}...${cAddress.slice(-4)}` : "0x...";
   const date = new Date(blob.timestamp).toLocaleDateString();
 
   const handleLike = async (e: React.MouseEvent) => {
@@ -27,32 +33,27 @@ export function FeedCard({ blob: initialBlob }: { blob: BlobMetadata }) {
     }
   };
 
-  const handleShare = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const url = `${window.location.origin}/content/${blob.id}`;
-    navigator.clipboard.writeText(url);
-    alert("Link copied!");
+  const getIcon = () => {
+    const typeLower = (cType || '').toLowerCase();
+    if (typeLower.includes('image')) return <ImageIcon className="w-12 h-12" />;
+    if (typeLower.includes('video')) return <Video className="w-12 h-12" />;
+    if (typeLower.includes('code') || typeLower.includes('source')) return <Code className="w-12 h-12" />;
+    if (typeLower.includes('pdf')) return <FileText className="w-12 h-12" />;
+    if (typeLower.includes('zip') || typeLower.includes('rar') || typeLower.includes('archive')) return <FileArchive className="w-12 h-12" />;
+    return <FileJson className="w-12 h-12" />;
   };
 
-  const getIcon = () => {
-    switch (cType) {
-      case 'Image': return <ImageIcon className="w-12 h-12" />;
-      case 'Video': return <Video className="w-12 h-12" />;
-      case 'Source Code': return <Code className="w-12 h-12" />;
-      default: return <FileText className="w-12 h-12" />;
-    }
-  };
+  if (!mounted) return <div className="aspect-[3/4] bg-surface/50 rounded-[2rem] animate-pulse border border-divider"></div>;
 
   return (
-    <Card className="overflow-hidden bg-[#0F1419] border border-white/[0.05] rounded-[2rem] hover:border-primary/30 transition-all duration-500 group flex flex-col h-full shadow-2xl">
+    <Card className="overflow-hidden bg-surface border border-divider rounded-[2rem] hover:border-primary/40 transition-all duration-500 group flex flex-col h-full shadow-xl hover:shadow-2xl hover:shadow-primary/5">
       <Link href={`/content/${blob.id}`} className="block flex-1">
         {/* Top: Media Section */}
-        <div className="aspect-video bg-background relative flex items-center justify-center overflow-hidden border-b border-white/[0.03]">
+        <div className="aspect-video bg-muted/20 relative flex items-center justify-center overflow-hidden border-b border-divider">
           {thumb ? (
             <img src={thumb} alt={blob.title} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
           ) : (
-            <div className="text-zinc-800 group-hover:text-primary transition-colors duration-500 scale-150">
+            <div className="text-muted-foreground/30 group-hover:text-primary transition-colors duration-500 scale-150">
               {getIcon()}
             </div>
           )}
@@ -61,10 +62,10 @@ export function FeedCard({ blob: initialBlob }: { blob: BlobMetadata }) {
              {blob.price > 0 ? (
                <div className="bg-primary/10 border border-primary/20 backdrop-blur-md text-primary rounded-lg px-3 py-1 flex items-center gap-2 shadow-sm">
                  <Lock className="w-3 h-3" />
-                 <span className="text-[10px] font-mono font-bold tracking-widest uppercase">{blob.price} SUSD</span>
+                 <span className="text-[10px] font-mono font-black tracking-widest uppercase">{blob.price} SUSD</span>
                </div>
              ) : (
-                <div className="bg-zinc-800/80 backdrop-blur-md text-zinc-300 rounded-lg px-3 py-1 text-[10px] font-mono font-bold tracking-widest uppercase">
+                <div className="bg-surface/80 backdrop-blur-md border border-divider text-muted-foreground rounded-lg px-3 py-1 text-[10px] font-mono font-black tracking-widest uppercase">
                    Free Demo
                 </div>
              )}
@@ -80,39 +81,39 @@ export function FeedCard({ blob: initialBlob }: { blob: BlobMetadata }) {
            </div>
 
            <div className="flex items-center gap-3">
-              <Badge className="bg-primary/10 text-primary border-primary/20 font-mono text-[9px] uppercase tracking-[0.2em] px-3 py-1 rounded-lg">
+              <Badge className="bg-primary/5 text-primary border-primary/20 font-mono text-[9px] uppercase tracking-[0.2em] px-3 py-1 rounded-lg font-black">
                  {cType}
               </Badge>
-              <span className="text-[10px] font-mono text-zinc-600 font-bold uppercase tracking-widest">{date}</span>
+              <span className="text-[10px] font-mono text-muted-foreground font-black uppercase tracking-widest">{date}</span>
            </div>
 
            <p className="text-muted-foreground text-sm font-medium line-clamp-2 leading-relaxed">
-              {blob.description || "No specific technical protocol details provided for this ingestion."}
+              {blob.description || "No Protocol Metadata."}
            </p>
         </div>
       </Link>
 
       {/* Bottom: Footer / Engagements */}
       <div className="mt-auto p-8 pt-0">
-         <div className="pt-6 border-t border-white/[0.05] flex items-center justify-between">
-            <div className="flex items-center gap-3">
-               <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-[11px] text-primary font-black uppercase shadow-inner">
+         <div className="pt-6 border-t border-divider flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+               <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-[11px] text-primary font-black uppercase shadow-inner shrink-0">
                  {cAddress ? cAddress.slice(2, 4).toUpperCase() : "??"}
                </div>
-               <span className="text-[10px] font-mono font-black text-zinc-500 uppercase tracking-widest">{shortAddress}</span>
+               <span className="text-[10px] font-mono font-black text-muted-foreground uppercase tracking-widest truncate">{shortAddress}</span>
             </div>
 
-            <div className="flex items-center gap-6">
-               <div className="flex items-center gap-2 group/stat">
-                  <Eye className="w-4 h-4 text-zinc-600 transition-colors group-hover/stat:text-primary" />
-                  <span className="text-[11px] font-mono font-bold text-zinc-600">{blob.views}</span>
+            <div className="flex items-center gap-5 shrink-0">
+               <div className="flex items-center gap-1.5 group/stat">
+                  <Eye className="w-3.5 h-3.5 text-muted-foreground transition-colors group-hover/stat:text-primary" />
+                  <span className="text-[11px] font-mono font-black text-muted-foreground group-hover/stat:text-foreground">{blob.views}</span>
                </div>
                <button 
                   onClick={handleLike}
-                  className="flex items-center gap-2 group/like"
+                  className="flex items-center gap-1.5 group/like"
                >
-                  <Heart className={`w-4 h-4 transition-all duration-300 ${blob.likes > 0 ? "fill-primary text-primary" : "text-zinc-600 group-hover/like:text-primary"}`} />
-                  <span className={`text-[11px] font-mono font-bold ${blob.likes > 0 ? "text-primary" : "text-zinc-600"}`}>{blob.likes}</span>
+                  <Heart className={`w-3.5 h-3.5 transition-all duration-300 ${blob.likes > 0 ? "fill-primary text-primary" : "text-muted-foreground group-hover/like:text-primary"}`} />
+                  <span className={`text-[11px] font-mono font-black ${blob.likes > 0 ? "text-primary" : "text-muted-foreground group-hover/like:text-foreground"}`}>{blob.likes}</span>
                </button>
             </div>
          </div>
