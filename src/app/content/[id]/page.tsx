@@ -3,23 +3,24 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
-import { downloadBlob, listBlobs, BlobMetadata } from "@/lib/shelby";
+import { downloadBlob, listBlobs, BlobMetadata, recordView, recordLike, followUser, getFollowCount } from "@/lib/shelby";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Lock, Unlock, Download, Eye, Heart, Share2, Loader2, PlayCircle } from "lucide-react";
+import { Lock, Unlock, Download, Eye, Heart, Share2, Loader2, PlayCircle, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
 export default function ContentPage() {
   const { id } = useParams() as { id: string };
-  const { account, connected, signAndSubmitTransaction } = useWallet();
+  const { account, connected } = useWallet();
   const [blob, setBlob] = useState<BlobMetadata | null>(null);
   const [loading, setLoading] = useState(true);
+  const [followers, setFollowers] = useState(0);
+  const [isFollowing, setIsFollowing] = useState(false);
   
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isPaying, setIsPaying] = useState(false);
-  const [contentBuffer, setContentBuffer] = useState<ArrayBuffer | null>(null);
-
+  
   useEffect(() => {
     async function loadContent() {
       setLoading(true);
@@ -31,6 +32,12 @@ export default function ContentPage() {
           if (found.price === 0) {
             setIsUnlocked(true);
           }
+          // Record View
+          await recordView(id);
+          
+          // Get Creator Follows
+          const count = await getFollowCount(found.creatorAddress);
+          setFollowers(count);
         }
       } catch (err) {
         console.error(err);
@@ -40,6 +47,37 @@ export default function ContentPage() {
     }
     loadContent();
   }, [id]);
+
+  const handleLike = async () => {
+    try {
+      await recordLike(id);
+      if (blob) setBlob({ ...blob, likes: blob.likes + 1 });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleFollow = async () => {
+    if (!connected || !account) {
+      alert("Connect wallet to follow creators.");
+      return;
+    }
+    try {
+      if (blob) {
+        await followUser(account.address.toString(), blob.creatorAddress);
+        setIsFollowing(true);
+        setFollowers(prev => prev + 1);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleShare = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+    alert("Shareable link copied to clipboard!");
+  };
 
   const handlePayment = async () => {
     if (!connected || !account) {
@@ -174,10 +212,19 @@ export default function ContentPage() {
                </div>
                <div>
                   <p className="text-sm text-muted-foreground leading-tight">Creator</p>
-                  <p className="font-semibold text-foreground">{shortAddress}</p>
+                  <p className="font-semibold text-foreground truncate w-24 sm:w-auto">{shortAddress}</p>
+                  <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-tighter">{followers} Followers</p>
                </div>
              </div>
-             <Button variant="outline" size="sm" className="rounded-full">Follow</Button>
+             <Button 
+                variant={isFollowing ? "secondary" : "outline"} 
+                size="sm" 
+                className="rounded-full"
+                onClick={handleFollow}
+                disabled={isFollowing}
+             >
+                {isFollowing ? <><UserCheck className="w-4 h-4 mr-1" /> Followed</> : "Follow"}
+             </Button>
           </div>
 
           <div>
@@ -204,14 +251,20 @@ export default function ContentPage() {
 
           <div className="flex justify-between pt-4 border-t border-border/50">
             <div className="flex gap-4">
-              <button className="flex items-center gap-1.5 text-muted-foreground hover:text-red-500 transition-colors text-sm font-medium">
-                <Heart className="w-5 h-5" /> {blob.likes}
+              <button 
+                 onClick={handleLike}
+                 className="flex items-center gap-1.5 text-muted-foreground hover:text-red-500 transition-colors text-sm font-medium"
+              >
+                <Heart className={`w-5 h-5 ${blob.likes > 0 ? "fill-red-500 text-red-500" : ""}`} /> {blob.likes}
               </button>
               <div className="flex items-center gap-1.5 text-muted-foreground text-sm font-medium">
                 <Eye className="w-5 h-5" /> {blob.views}
               </div>
             </div>
-            <button className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors text-sm font-medium">
+            <button 
+               onClick={handleShare}
+               className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
+            >
               <Share2 className="w-5 h-5" /> Share
             </button>
           </div>

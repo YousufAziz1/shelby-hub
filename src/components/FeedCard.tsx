@@ -1,12 +1,33 @@
 import Link from 'next/link';
 import { Card, CardContent, CardFooter, CardHeader } from './ui/card';
 import { Badge } from './ui/badge';
-import { Heart, Eye, Image as ImageIcon, Video, Code, FileText, Lock } from 'lucide-react';
-import { BlobMetadata } from '@/lib/shelby';
+import { Heart, Eye, Image as ImageIcon, Video, Code, FileText, Lock, Share2 } from 'lucide-react';
+import { BlobMetadata, recordLike } from '@/lib/shelby';
+import { useState } from 'react';
 
-export function FeedCard({ blob }: { blob: BlobMetadata }) {
+export function FeedCard({ blob: initialBlob }: { blob: BlobMetadata }) {
+  const [blob, setBlob] = useState(initialBlob);
   const shortAddress = `${blob.creatorAddress.slice(0, 6)}...${blob.creatorAddress.slice(-4)}`;
   const date = new Date(blob.timestamp).toLocaleDateString();
+
+  const handleLike = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await recordLike(blob.id);
+      setBlob({ ...blob, likes: blob.likes + 1 });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleShare = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const url = `${window.location.origin}/content/${blob.id}`;
+    navigator.clipboard.writeText(url);
+    alert("Link copied!");
+  };
 
   const getIcon = () => {
     switch (blob.contentType) {
@@ -64,8 +85,19 @@ export function FeedCard({ blob }: { blob: BlobMetadata }) {
           <span className="font-semibold text-foreground/80 hover:text-foreground transition-colors cursor-pointer">{shortAddress}</span>
         </div>
         <div className="flex items-center gap-3.5">
-          <span className="flex items-center gap-1.5 hover:text-foreground transition-colors cursor-pointer"><Eye className="w-4 h-4" /> {blob.views}</span>
-          <span className="flex items-center gap-1.5 hover:text-red-500 transition-colors cursor-pointer"><Heart className="w-4 h-4" /> {blob.likes}</span>
+          <span className="flex items-center gap-1.5 transition-colors cursor-default"><Eye className="w-4 h-4" /> {blob.views}</span>
+          <button 
+             onClick={handleLike}
+             className="flex items-center gap-1.5 hover:text-red-500 transition-colors cursor-pointer"
+          >
+            <Heart className={`w-4 h-4 ${blob.likes > 0 ? "fill-red-500 text-red-500" : ""}`} /> {blob.likes}
+          </button>
+          <button 
+             onClick={handleShare}
+             className="flex items-center gap-1.5 hover:text-foreground transition-colors cursor-pointer"
+          >
+            <Share2 className="w-4 h-4" />
+          </button>
         </div>
       </CardFooter>
     </Card>

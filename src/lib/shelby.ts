@@ -98,3 +98,33 @@ export const getStorageUsage = async () => {
   if (error) return 0;
   return data.reduce((acc, curr) => acc + (curr.fileSize || 0), 0);
 };
+
+export const recordView = async (id: string) => {
+  const { error } = await supabase.rpc('increment_views', { blob_id: id });
+  if (error) console.error("View increment error", error);
+};
+
+export const recordLike = async (id: string) => {
+  const { error } = await supabase.rpc('increment_likes', { blob_id: id });
+  if (error) throw error;
+};
+
+export const followUser = async (follower: string, following: string) => {
+  const { error } = await supabase
+    .from('follows')
+    .insert([{ follower_address: follower, following_address: following }]);
+  
+  if (error && error.code !== '23505') { // Ignore duplicate follow errors
+    throw error;
+  }
+};
+
+export const getFollowCount = async (address: string) => {
+  const { count, error } = await supabase
+    .from('follows')
+    .select('*', { count: 'exact', head: true })
+    .eq('following_address', address);
+    
+  if (error) return 0;
+  return count || 0;
+};
