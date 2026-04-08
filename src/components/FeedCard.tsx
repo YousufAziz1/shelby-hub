@@ -58,7 +58,6 @@ export function FeedCard({ blob: initialBlob }: { blob: BlobMetadata }) {
             </div>
           )}
           
-          {/* Top Overlays */}
           <div className="absolute top-5 left-5 z-20">
              <Badge className="bg-background/80 backdrop-blur-md text-zinc-400 border-white/5 font-mono text-[9px] uppercase tracking-[0.2em] px-3 py-1 rounded-lg">
                 {cType}
@@ -72,41 +71,37 @@ export function FeedCard({ blob: initialBlob }: { blob: BlobMetadata }) {
             </div>
           )}
 
-          {/* Bottom Info Overlay */}
-          <div className="absolute bottom-0 left-0 right-0 p-8 z-20 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-             <h3 className="text-2xl font-heading font-bold text-foreground leading-[1.1] mb-5 tracking-tight drop-shadow-2xl">{blob.title}</h3>
-             <div className="flex items-center gap-4">
-                <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-[10px] text-primary font-bold shadow-inner">
-                  {cAddress ? cAddress.slice(2, 4).toUpperCase() : "??"}
+          <div className="absolute bottom-0 left-0 right-0 p-8 z-20 transition-all duration-500">
+             <h3 className="text-2xl font-heading font-black text-foreground leading-[1.1] mb-5 tracking-tight drop-shadow-2xl uppercase">{blob.title}</h3>
+             
+             <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                   <div className="w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-[10px] text-primary font-bold shadow-inner uppercase">
+                     {cAddress ? cAddress.slice(2, 4).toUpperCase() : "??"}
+                   </div>
+                   <div>
+                      <span className="block text-[10px] font-mono font-black text-zinc-300 uppercase tracking-widest leading-none mb-1">{shortAddress}</span>
+                   </div>
                 </div>
-                <div>
-                   <span className="block text-[10px] font-mono font-bold text-zinc-300 uppercase tracking-widest leading-none mb-1">{shortAddress}</span>
-                   <span className="block text-[8px] font-mono text-zinc-600 uppercase tracking-[0.2em]">Verified Asset</span>
+
+                {/* X-Style Engagements */}
+                <div className="flex items-center gap-6">
+                   <button 
+                      onClick={handleLike}
+                      className="flex items-center gap-2 group/like"
+                   >
+                      <Heart className={`w-4 h-4 transition-colors ${blob.likes > 0 ? "fill-primary text-primary" : "text-zinc-500 group-hover/like:text-primary"}`} />
+                      <span className={`text-[11px] font-mono font-bold ${blob.likes > 0 ? "text-primary" : "text-zinc-500"}`}>{blob.likes}</span>
+                   </button>
+                   <div className="flex items-center gap-2">
+                      <Eye className="w-4 h-4 text-zinc-500" />
+                      <span className="text-[11px] font-mono font-bold text-zinc-500">{blob.views}</span>
+                   </div>
                 </div>
              </div>
           </div>
         </div>
       </Link>
-      
-      {/* Social Actions (Minimal Protocol Indicators) */}
-      <div className="absolute right-6 bottom-32 z-30 flex flex-col gap-6 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
-        <button 
-           onClick={handleLike}
-           className="flex flex-col items-center gap-2 group/btn"
-        >
-          <div className={`w-11 h-11 rounded-xl flex items-center justify-center border transition-all ${blob.likes > 0 ? "bg-primary border-primary text-background shadow-[0_0_15px_rgba(34,199,184,0.3)]" : "bg-background/60 border-white/10 text-zinc-400 hover:text-foreground hover:border-white/20"}`}>
-            <Heart className={`w-4 h-4 ${blob.likes > 0 ? "fill-background" : ""}`} />
-          </div>
-          <span className="text-[10px] font-mono text-zinc-500">{blob.likes}</span>
-        </button>
-        
-        <div className="flex flex-col items-center gap-2">
-          <div className="w-11 h-11 rounded-xl bg-background/60 border border-white/10 text-zinc-400 flex items-center justify-center">
-            <Eye className="w-4 h-4" />
-          </div>
-          <span className="text-[10px] font-mono text-zinc-500">{blob.views}</span>
-        </div>
-      </div>
     </Card>
   );
 }

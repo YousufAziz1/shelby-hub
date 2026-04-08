@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FeedCard } from "@/components/FeedCard";
-import { listBlobs, BlobMetadata } from "@/lib/shelby";
+import { listBlobs, BlobMetadata, getStorageUsage } from "@/lib/shelby";
 import { Button } from "@/components/ui/button";
-import { Search, ArrowRight, Sparkles, LayoutGrid } from "lucide-react";
+import { Search, ArrowRight, Loader2, Sparkles, LayoutGrid, Database, Activity } from "lucide-react";
 
 const FILTERS = ["All", "Images", "Videos", "Courses", "Source Code", "Trending"];
+const STORAGE_LIMIT_MB = 500;
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -19,13 +20,18 @@ export default function Home() {
   const [blobs, setBlobs] = useState<BlobMetadata[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("All");
+  const [usedBytes, setUsedBytes] = useState(0);
 
   useEffect(() => {
     async function loadData() {
       setLoading(true);
       try {
-        const data = await listBlobs();
+        const [data, usage] = await Promise.all([
+          listBlobs(),
+          getStorageUsage()
+        ]);
         setBlobs(data);
+        setUsedBytes(usage);
       } catch (err) {
         console.error("Failed to load blobs", err);
       } finally {
@@ -34,6 +40,9 @@ export default function Home() {
     }
     loadData();
   }, []);
+
+  const usedMB = (usedBytes / (1024 * 1024)).toFixed(2);
+  const percentUsed = Math.min((parseFloat(usedMB) / STORAGE_LIMIT_MB) * 100, 100);
 
   const filteredBlobs = blobs.filter((blob) => {
     if (activeFilter === "All") return true;
@@ -46,7 +55,7 @@ export default function Home() {
   return (
     <div className="relative min-h-screen bg-grid">
       {/* High-Impact Centered Hero */}
-      <section className="container mx-auto px-6 pt-32 pb-24 text-center max-w-[1200px]">
+      <section className="container mx-auto px-6 pt-32 pb-16 text-center max-w-[1200px]">
         <motion.div {...fadeInUp} className="space-y-10">
           <div className="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-primary/10 border border-primary/20 text-primary font-mono text-[10px] uppercase tracking-[0.4em] font-bold mx-auto shadow-2xl shadow-primary/5">
              <Sparkles className="w-3.5 h-3.5" /> Powered by Shelby Protocol Testnet 🚀
@@ -62,13 +71,41 @@ export default function Home() {
             pricing in ShelbyUSD, and get paid instantly.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
-             <Button className="h-16 px-10 rounded-xl bg-primary text-background font-black uppercase tracking-widest text-[11px] hover:scale-[1.02] transition-all shadow-xl shadow-primary/20">
-               Initialize Ingestion <ArrowRight className="ml-2 w-4 h-4" />
-             </Button>
-             <Button variant="outline" className="h-16 px-10 rounded-xl border-border bg-surface text-foreground font-black uppercase tracking-widest text-[11px] hover:bg-muted transition-all">
-               Documentation
-             </Button>
+          <div className="max-w-md mx-auto pt-10">
+             <div className="bg-[#020617] border border-white/5 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+                   <Database className="w-16 h-16 text-primary" />
+                </div>
+                
+                <div className="flex items-center justify-between mb-8">
+                   <div className="flex items-center gap-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(34,199,184,0.5)]"></div>
+                      <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-[0.3em] font-bold">Storage Pressure</span>
+                   </div>
+                   <span className="font-mono text-[10px] text-primary font-black uppercase tracking-widest">{percentUsed.toFixed(1)}%</span>
+                </div>
+
+                <div className="space-y-6">
+                   <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${percentUsed}%` }}
+                        transition={{ duration: 1.5, ease: "easeOut" }}
+                        className="h-full bg-primary shadow-[0_0_15px_rgba(34,199,184,0.3)]"
+                      />
+                   </div>
+                   <div className="flex justify-between items-end">
+                      <div className="text-left">
+                         <p className="text-2xl font-black text-foreground font-mono leading-none mb-1">{usedMB}<span className="text-[10px] text-zinc-600 ml-1">MB</span></p>
+                         <p className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest font-bold">Protocol Volume</p>
+                      </div>
+                      <div className="text-right flex items-center gap-2">
+                         <Activity className="w-3.5 h-3.5 text-primary opacity-40" />
+                         <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest font-bold italic">Active Sync</span>
+                      </div>
+                   </div>
+                </div>
+             </div>
           </div>
         </motion.div>
       </section>
