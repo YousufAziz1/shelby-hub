@@ -70,7 +70,7 @@ export default function UploadPage() {
           description,
           contentType,
           price: parseFloat(price) || 0,
-          creatorAddress: account.address,
+          creatorAddress: account.address.toString(),
           timestamp: Date.now(),
           likes: 0,
           views: 0,
@@ -106,12 +106,12 @@ export default function UploadPage() {
               Blob ID: <span className="text-primary">{success.id}</span>
             </div>
             <div className="flex justify-center gap-4">
-              <Button asChild variant="outline">
-                <Link href="/">Back to Feed</Link>
-              </Button>
-              <Button asChild>
-                <Link href={`/content/${success.id}`}>View Content</Link>
-              </Button>
+              <Link href="/">
+                <Button variant="outline">Back to Feed</Button>
+              </Link>
+              <Link href={`/content/${success.id}`}>
+                <Button>View Content</Button>
+              </Link>
             </div>
           </CardContent>
         </Card>

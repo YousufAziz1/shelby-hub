@@ -104,7 +104,7 @@ export default function ContentPage() {
       <div className="container mx-auto px-4 py-20 text-center">
         <h1 className="text-3xl font-bold mb-4">Content Not Found</h1>
         <p className="text-muted-foreground mb-8">The blob you are looking for might have been removed or is completely private.</p>
-        <Button asChild><Link href="/">Return to Feed</Link></Button>
+        <Link href="/"><Button>Return to Feed</Button></Link>
       </div>
     );
   }

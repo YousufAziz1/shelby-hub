@@ -26,7 +26,7 @@ export default function DashboardPage() {
         // Since we mock global state, let's pretend ALL blobs belong to creator if connected for demo.
         // Real implementation: const data = await listBlobs({ filter: { creatorAddress: account.address } })
         // Let's filter realistically if mock data is used:
-        setMyBlobs(data.filter(b => b.creatorAddress === account.address || b.creatorAddress.includes("123"))); 
+        setMyBlobs(data.filter(b => b.creatorAddress === account.address.toString() || b.creatorAddress.includes("123"))); 
       } catch (err) {
         console.error("Failed to load blobs", err);
       } finally {
@@ -59,9 +59,11 @@ export default function DashboardPage() {
            <h1 className="text-4xl font-bold tracking-tight mb-2">Creator Dashboard</h1>
            <p className="text-muted-foreground">Manage your uploads and track your testnet earnings.</p>
          </div>
-         <Button asChild className="hidden sm:flex gap-2">
-           <Link href="/upload"><UploadCloud className="w-4 h-4" /> Upload New File</Link>
-         </Button>
+         <Link href="/upload">
+           <Button className="hidden sm:flex gap-2">
+             <UploadCloud className="w-4 h-4" /> Upload New File
+           </Button>
+         </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -112,7 +114,7 @@ export default function DashboardPage() {
          ) : (
            <div className="text-center py-20 bg-muted/20 rounded-xl border border-dashed">
               <p className="text-muted-foreground mb-4">You haven't uploaded anything yet.</p>
-              <Button asChild variant="outline"><Link href="/upload">Upload Your First File</Link></Button>
+              <Link href="/upload"><Button variant="outline">Upload Your First File</Button></Link>
            </div>
          )}
       </div>
