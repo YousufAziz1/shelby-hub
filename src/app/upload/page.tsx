@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { UploadCloud, File as FileIcon, X, Loader2 } from "lucide-react";
+import { UploadCloud, File as FileIcon, X, Loader2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
 const CONTENT_TYPES = ["Image", "Video", "Course", "Source Code", "Other"];
@@ -150,25 +150,39 @@ export default function UploadPage() {
     }
   };
 
-  if (success) {
+   if (success) {
     return (
-      <div className="container mx-auto px-4 py-16 max-w-2xl">
-        <Card className="text-center py-12 border-primary/20 bg-primary/5">
-          <CardContent>
-            <CheckCircle2 className="w-20 h-20 text-primary mx-auto mb-6" />
-            <h2 className="text-3xl font-bold mb-4">Upload Successful!</h2>
-            <p className="text-muted-foreground mb-8">
-              Your content has been securely pinned on the Shelby Protocol testnet.
-            </p>
-            <div className="bg-background p-4 rounded-lg border font-mono text-sm mb-8 break-all">
-              Blob ID: <span className="text-primary">{success.id}</span>
+      <div className="container mx-auto px-6 py-32 max-w-2xl text-center relative">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/20 rounded-full blur-[120px] -z-10"></div>
+        
+        <Card className="border-white/5 bg-zinc-900/60 backdrop-blur-2xl rounded-[3rem] p-12 shadow-[0_30px_60px_rgba(0,0,0,0.5)] border">
+          <CardContent className="space-y-10">
+            <div className="w-24 h-24 bg-primary rounded-[2rem] flex items-center justify-center mx-auto shadow-[0_0_40px_rgba(255,20,147,0.4)] animate-in zoom-in duration-500">
+              <CheckCircle2 className="w-12 h-12 text-white" />
             </div>
-            <div className="flex justify-center gap-4">
-              <Link href="/">
-                <Button variant="outline">Back to Feed</Button>
+            
+            <div className="space-y-4">
+              <h2 className="text-4xl font-black text-white tracking-tighter">Broadcast Successful</h2>
+              <p className="text-zinc-400 font-medium text-lg leading-relaxed">
+                Your asset has been securely ingested and indexed on the Shelby Protocol layer.
+              </p>
+            </div>
+
+            <div className="bg-black/40 border border-white/5 p-6 rounded-2xl font-mono text-[10px] uppercase tracking-widest text-zinc-500 shadow-inner group transition-all">
+              <span className="block mb-2 text-primary font-black opacity-60">Asset Settlement ID</span>
+              <span className="text-white font-black break-all">{success.id}</span>
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-center gap-6 pt-6">
+              <Link href="/" className="flex-1">
+                <Button variant="outline" className="w-full h-14 rounded-2xl border-white/10 bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 font-black uppercase tracking-widest text-[10px]">
+                  Explore Feed
+                </Button>
               </Link>
-              <Link href={`/content/${success.id}`}>
-                <Button>View Content</Button>
+              <Link href={`/content/${success.id}`} className="flex-1">
+                <Button className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest text-[10px] shadow-[0_10px_20px_rgba(255,20,147,0.2)]">
+                  Verify Asset
+                </Button>
               </Link>
             </div>
           </CardContent>
