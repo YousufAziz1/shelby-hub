@@ -77,17 +77,15 @@ export const listBlobs = async (params: { limit?: number, filter?: any } = {}) =
 };
 
 export const downloadBlob = async (id: string) => {
-  // Since we use public URLs, we can just fetch the URL
   const { data, error } = await supabase
     .from('blobs')
-    .select('fileUrl')
+    .select('*')
     .eq('id', id)
     .single();
 
   if (error || !data.fileUrl) throw new Error("File not found");
   
-  const response = await fetch(data.fileUrl);
-  return await response.arrayBuffer();
+  return data as BlobMetadata;
 };
 
 export const getStorageUsage = async () => {

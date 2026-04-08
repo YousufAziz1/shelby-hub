@@ -120,19 +120,34 @@ export default function ContentPage() {
   };
 
   const handleDownload = async () => {
+    if (!blob) return;
     try {
-      // Simulate download using SDK
-      const data = await downloadBlob(id);
-      // Create a fake URI to download
-      const blobPart = new window.Blob([data], { type: "application/octet-stream" });
-      const url = URL.createObjectURL(blobPart);
+      const metadata = await downloadBlob(id);
+      if (!metadata.fileUrl) throw new Error("No URL found");
+
+      // Fetch the binary data
+      const response = await fetch(metadata.fileUrl);
+      const buffer = await response.blob();
+      
+      // Determine extension
+      let ext = "bin";
+      const cType = metadata.contentType || (metadata as any).contenttype; // Resilient
+      if (cType === "Image") ext = "png";
+      else if (cType === "Video") ext = "mp4";
+      else if (cType === "Source Code") ext = "txt";
+      else if (cType === "Course") ext = "pdf";
+
+      const url = URL.createObjectURL(buffer);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `shelby_content_${id}`;
+      a.download = `${metadata.title.replace(/\s+/g, '_')}_shelbyhub.${ext}`;
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     } catch (e) {
       console.error("Download error", e);
-      alert("Failed to download content. Note: this is a mock implementation.");
+      alert("Failed to download content. Please check your connection.");
     }
   };
 
