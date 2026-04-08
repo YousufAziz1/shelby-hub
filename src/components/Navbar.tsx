@@ -42,36 +42,30 @@ export function Navbar() {
         <div className="flex items-center gap-12">
           <Link href="/" className="font-heading text-2xl tracking-tighter text-foreground flex items-center gap-3 group">
             <div className="w-10 h-10 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-center text-primary shadow-[0_0_20px_rgba(34,199,184,0.1)] group-hover:bg-primary group-hover:text-background transition-all duration-300">
-              <span className="font-black">S</span>
+              <span className="font-black font-heading lowercase">s</span>
             </div>
-            <span className="font-bold tracking-tight group-hover:translate-x-0.5 transition-transform duration-300">Shelby<span className="text-zinc-500">Hub</span></span>
+            <span className="font-black tracking-tight group-hover:translate-x-0.5 transition-transform duration-300 uppercase">Shelby<span className="text-primary italic">Hub</span></span>
           </Link>
           <div className="hidden md:flex gap-10">
-            <Link href="/" className="text-[12px] font-bold uppercase tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors">Browse Assets</Link>
-            <Link href="/upload" className="text-[12px] font-bold uppercase tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors">Mint Asset</Link>
-            <Link href="/dashboard" className="text-[12px] font-bold uppercase tracking-[0.15em] text-muted-foreground hover:text-primary transition-all">
-              Protocol Console
+            <Link href="/" className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors">Feed</Link>
+            <Link href="/upload" className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors">Upload</Link>
+            <Link href="/dashboard" className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-all">
+              Dashboard
             </Link>
           </div>
         </div>
-        <div className="flex items-center gap-8">
-          <div className="hidden xl:flex items-center gap-3 px-5 py-2 rounded-xl bg-surface border border-white/5">
-             <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_10px_rgba(34,199,184,0.5)] animate-pulse"></div>
-             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-400">
-               NODE <span className="text-zinc-700 mx-1">|</span> <span className="text-foreground tracking-normal font-bold">@APTOS_KING</span>
-             </p>
-          </div>
+        <div className="flex items-center gap-6">
           {mounted && (
             <button 
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2.5 rounded-xl border border-white/10 bg-background hover:bg-accent transition-all"
+              className="p-2.5 rounded-xl border border-divider bg-surface hover:bg-muted transition-all"
             >
-              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-primary" /> : <Moon className="w-4 h-4" />}
             </button>
           )}
           <Button 
             onClick={handleWalletAction} 
-            className="bg-primary hover:bg-primary/90 text-background rounded-xl px-10 h-11 transition-all font-bold uppercase tracking-widest text-[11px] hover:scale-[1.02] active:scale-[0.98] shadow-[0_10px_30px_rgba(34,199,184,0.15)]"
+            className="bg-primary hover:bg-primary/90 text-background rounded-xl px-8 h-11 transition-all font-black uppercase tracking-widest text-[10px] hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary/10"
           >
             {connected ? shortAddress : "Launch App"}
           </Button>
