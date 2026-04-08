@@ -372,7 +372,5 @@ export default function UploadPage() {
         </div>
       </form>
     </div>
-      </form>
-    </div>
   );
 }

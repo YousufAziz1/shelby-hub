@@ -176,7 +176,6 @@ export default function ContentPage() {
   const shortAddress = cAddress ? `${cAddress.slice(0, 6)}...${cAddress.slice(-4)}` : "0xUnknown";
 
   return (
-  return (
     <div className="container mx-auto px-4 py-16 max-w-6xl">
       <div className="grid lg:grid-cols-3 gap-12">
         
