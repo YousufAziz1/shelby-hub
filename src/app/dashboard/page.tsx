@@ -13,8 +13,8 @@ import { FeedCard } from "@/components/FeedCard";
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
-};
+  transition: { duration: 0.8, ease: "easeOut" }
+} as const;
 
 export default function DashboardPage() {
   const { account, connected } = useWallet();
@@ -73,7 +73,7 @@ export default function DashboardPage() {
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
         className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 mb-24"
       >
          <div className="space-y-6">

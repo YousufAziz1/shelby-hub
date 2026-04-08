@@ -27,8 +27,6 @@ import {
   Server,
   ChevronRight,
   Share2,
-  Github,
-  Twitter,
   ExternalLink
 } from "lucide-react";
 
@@ -37,13 +35,13 @@ const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true },
-  transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
-};
+  transition: { duration: 0.8, ease: "easeOut" }
+} as const;
 
 const staggerContainer = {
   initial: {},
   whileInView: { transition: { staggerChildren: 0.1 } }
-};
+} as const;
 
 // --- COMPONENTS ---
 const AnimatedCounter = ({ value, unit = "" }: { value: string, unit?: string }) => {
@@ -140,7 +138,7 @@ export default function Home() {
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 1, ease: "easeOut" }}
             className="space-y-10"
           >
             <Badge className="bg-primary/10 text-primary border-primary/20 px-4 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.3em]">
@@ -171,7 +169,7 @@ export default function Home() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.9, x: 30 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
-            transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
             className="relative group lg:block hidden"
           >
             <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 to-background rounded-[2.5rem] blur-2xl opacity-20 group-hover:opacity-40 transition duration-1000"></div>
@@ -408,10 +406,10 @@ export default function Home() {
               </p>
               <div className="flex items-center gap-5">
                  <Link href="#" className="p-3 rounded-lg border border-border hover:border-primary/30 transition-colors text-foreground opacity-60 hover:opacity-100">
-                    <Twitter className="w-5 h-5" />
+                    <Globe className="w-5 h-5" />
                  </Link>
                  <Link href="#" className="p-3 rounded-lg border border-border hover:border-primary/30 transition-colors text-foreground opacity-60 hover:opacity-100">
-                    <Github className="w-5 h-5" />
+                    <ExternalLink className="w-5 h-5" />
                  </Link>
                  <Link href="#" className="p-3 rounded-lg border border-border hover:border-primary/30 transition-colors text-foreground opacity-60 hover:opacity-100">
                     <Share2 className="w-5 h-5" />
