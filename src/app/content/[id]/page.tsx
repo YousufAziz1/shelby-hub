@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
-import { getShelbyClient, downloadBlob, listBlobs, BlobMetadata } from "@/lib/shelby";
+import { downloadBlob, listBlobs, BlobMetadata } from "@/lib/shelby";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Lock, Unlock, Download, Eye, Heart, Share2, Loader2, PlayCircle } from "lucide-react";
