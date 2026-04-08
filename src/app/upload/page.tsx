@@ -177,40 +177,44 @@ export default function UploadPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-10 max-w-3xl">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Upload Content</h1>
-        <p className="text-muted-foreground">Store your files decentrally and set your access terms via Shelby Protocol.</p>
+    <div className="container mx-auto px-4 py-16 max-w-3xl">
+      <div className="mb-12">
+        <h1 className="text-5xl font-black mb-3 tracking-tighter">Mint <span className="text-primary italic">Blob.</span></h1>
+        <p className="text-lg text-muted-foreground font-medium">Decentralized ingestion for the Shelby settlement layer.</p>
       </div>
 
       <form onSubmit={handleUpload} className="space-y-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>Main Content File</CardTitle>
-            <CardDescription>Drag and drop your primary content (Video, PDF, ZIP, etc.)</CardDescription>
+        <Card className="border shadow-xl shadow-primary/5 bg-white rounded-3xl overflow-hidden">
+          <CardHeader className="bg-[#FDFCFB] border-b">
+            <CardTitle className="text-xl font-bold">Standard Ingestion</CardTitle>
+            <CardDescription className="font-medium">Primary data packet for ShelbyNet validation.</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-8">
             {!file ? (
               <div 
                 {...dropzoneMain.getRootProps()} 
-                className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-colors ${dropzoneMain.isDragActive ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}
+                className={`border-2 border-dashed rounded-3xl p-16 text-center cursor-pointer transition-all duration-300 ${dropzoneMain.isDragActive ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40 hover:bg-[#FDFCFB]'}`}
               >
                 <input {...dropzoneMain.getInputProps()} />
-                <UploadCloud className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                <p className="font-medium text-lg mb-1">Click to upload or drag and drop</p>
-                <p className="text-sm text-muted-foreground">Any file up to 2GB</p>
+                <div className="w-16 h-16 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <UploadCloud className="w-8 h-8" />
+                </div>
+                <p className="font-extrabold text-xl mb-1 tracking-tight">Select Packer File</p>
+                <p className="text-sm text-muted-foreground font-medium">Max Payload: 2GB (Encrypted)</p>
               </div>
             ) : (
-              <div className="bg-muted p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between border">
-                <div className="flex items-center gap-3">
-                  <FileIcon className="w-8 h-8 text-primary" />
+              <div className="bg-[#FDFCFB] p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-between border border-primary/20 shadow-inner">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-primary rounded-xl text-white shadow-lg">
+                    <FileIcon className="w-6 h-6" />
+                  </div>
                   <div className="text-left w-full max-w-[200px] sm:max-w-xs">
-                    <p className="font-medium truncate">{file.name}</p>
-                    <p className="text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                    <p className="font-bold truncate text-foreground">{file.name}</p>
+                    <p className="text-xs text-primary font-black uppercase tracking-widest mt-0.5">{(file.size / 1024 / 1024).toFixed(2)} MB Payload</p>
                   </div>
                 </div>
-                <Button type="button" variant="ghost" size="icon" onClick={() => setFile(null)} className="h-8 w-8 text-muted-foreground hover:text-red-500">
-                  <X className="w-4 h-4" />
+                <Button type="button" variant="ghost" size="icon" onClick={() => setFile(null)} className="h-10 w-10 text-muted-foreground hover:text-primary hover:bg-primary/5">
+                  <X className="w-5 h-5" />
                 </Button>
               </div>
             )}
@@ -219,23 +223,24 @@ export default function UploadPage() {
 
         <div className="grid md:grid-cols-2 gap-8">
           <div className="space-y-6 md:col-span-2">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title <span className="text-red-500">*</span></Label>
+            <div className="space-y-2.5">
+              <Label htmlFor="title" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Blob Title</Label>
               <Input 
                 id="title" 
-                placeholder="Intro to Advanced Move Programming" 
+                placeholder="Unique Identifier..." 
+                className="h-12 rounded-xl bg-white border-border focus:ring-primary focus:border-primary font-semibold"
                 value={title} 
                 onChange={(e) => setTitle(e.target.value)} 
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+            <div className="space-y-2.5">
+              <Label htmlFor="description" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Protocol Memo</Label>
               <Textarea 
                 id="description" 
-                placeholder="In this course, we will cover..." 
+                placeholder="Metadata description for validation..." 
                 rows={4} 
-                className="resize-none"
+                className="resize-none rounded-xl bg-white border-border focus:ring-primary focus:border-primary font-medium"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
@@ -243,11 +248,11 @@ export default function UploadPage() {
           </div>
 
           <div className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="contentType">Content Type</Label>
+            <div className="space-y-2.5">
+              <Label htmlFor="contentType" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Ingestion Class</Label>
               <select 
                 id="contentType" 
-                className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-12 w-full items-center justify-between rounded-xl border border-border bg-white px-4 py-2 text-sm font-bold shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 appearance-none text-foreground"
                 value={contentType}
                 onChange={(e) => setContentType(e.target.value)}
               >
@@ -257,8 +262,8 @@ export default function UploadPage() {
               </select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="price">Price (in ShelbyUSD)</Label>
+            <div className="space-y-2.5">
+              <Label htmlFor="price" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Settlement Price (SUSD)</Label>
               <div className="relative">
                 <Input 
                   id="price" 
@@ -266,44 +271,47 @@ export default function UploadPage() {
                   step="0.01"
                   min="0"
                   placeholder="0.00" 
-                  className="pl-8"
+                  className="pl-10 h-12 rounded-xl bg-white border-border focus:ring-primary font-bold"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                 />
-                <span className="absolute left-3 top-2.5 text-muted-foreground text-sm font-medium">$</span>
+                <span className="absolute left-4 top-3.5 text-primary font-black">$</span>
               </div>
-              <p className="text-xs text-muted-foreground">Set to 0 for free access.</p>
             </div>
           </div>
 
           <div className="space-y-6">
-            <div className="space-y-2">
-              <Label>Visibility & Rights</Label>
-              <Card className="p-4 bg-muted/30">
-                <div className="space-y-4">
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
-                      checked={isPublic}
-                      onChange={(e) => setIsPublic(e.target.checked)}
-                    />
-                    <div className="space-y-0.5">
-                      <span className="font-medium text-sm block">Make Public</span>
-                      <span className="text-xs text-muted-foreground block">List this content in the global feed.</span>
+            <div className="space-y-2.5">
+              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Rights & Validation</Label>
+              <Card className="p-5 bg-white border-border overflow-hidden rounded-2xl shadow-sm">
+                <div className="space-y-5">
+                  <label className="flex items-start gap-4 cursor-pointer group">
+                    <div className="pt-1">
+                      <input 
+                        type="checkbox" 
+                        className="w-5 h-5 rounded-md border-border text-primary focus:ring-primary transition-all cursor-pointer accent-primary"
+                        checked={isPublic}
+                        onChange={(e) => setIsPublic(e.target.checked)}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="font-extrabold text-sm block group-hover:text-primary transition-colors">Public Ledger</span>
+                      <span className="text-[11px] text-muted-foreground block font-medium leading-relaxed">Broadcast this blob to the synchronized global explorer.</span>
                     </div>
                   </label>
 
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
-                      checked={mintNft}
-                      onChange={(e) => setMintNft(e.target.checked)}
-                    />
-                    <div className="space-y-0.5">
-                      <span className="font-medium text-sm block">Mint as NFT (Aptos)</span>
-                      <span className="text-xs text-muted-foreground block">Creates an on-chain record for provenance.</span>
+                  <label className="flex items-start gap-4 cursor-pointer group">
+                    <div className="pt-1">
+                      <input 
+                        type="checkbox" 
+                        className="w-5 h-5 rounded-md border-border text-primary focus:ring-primary transition-all cursor-pointer accent-primary"
+                        checked={mintNft}
+                        onChange={(e) => setMintNft(e.target.checked)}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="font-extrabold text-sm block group-hover:text-primary transition-colors">On-Chain Provenance (NFT)</span>
+                      <span className="text-[11px] text-muted-foreground block font-medium leading-relaxed">Immutable NFT record for ownership verification.</span>
                     </div>
                   </label>
                 </div>
@@ -311,22 +319,21 @@ export default function UploadPage() {
             </div>
           </div>
           
-          <div className="space-y-2 md:col-span-2">
-             <Label>Preview Blob (Optional)</Label>
-             <p className="text-xs text-muted-foreground mb-2">Upload a free demo, low-res image, or snippet for users before they buy.</p>
+          <div className="space-y-2.5 md:col-span-2">
+             <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Preview Packet (Optional)</Label>
              {!previewFile ? (
                 <div 
                   {...dropzonePreview.getRootProps()} 
-                  className={`border border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${dropzonePreview.isDragActive ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}
+                  className={`border border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${dropzonePreview.isDragActive ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 bg-white'}`}
                 >
                   <input {...dropzonePreview.getInputProps()} />
-                  <p className="text-sm text-muted-foreground">Drop a preview file here</p>
+                  <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Drop verification preview here</p>
                 </div>
               ) : (
-                <div className="bg-muted px-4 py-2 rounded-lg flex items-center justify-between border text-sm">
-                  <span className="truncate">{previewFile.name}</span>
-                  <Button type="button" variant="ghost" size="icon" onClick={() => setPreviewFile(null)} className="h-6 w-6">
-                    <X className="w-4 h-4" />
+                <div className="bg-primary/5 px-6 py-4 rounded-xl flex items-center justify-between border border-primary/20 text-sm font-bold shadow-inner">
+                  <span className="truncate text-primary">{previewFile.name}</span>
+                  <Button type="button" variant="ghost" size="icon" onClick={() => setPreviewFile(null)} className="h-8 w-8 hover:bg-primary/10 text-primary">
+                    <X className="w-5 h-5" />
                   </Button>
                 </div>
               )}
@@ -334,30 +341,37 @@ export default function UploadPage() {
         </div>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-500 px-4 py-3 rounded-lg text-sm font-medium">
+          <div className="bg-red-500/5 border border-red-500/20 text-red-600 px-6 py-4 rounded-2xl text-sm font-bold flex items-center gap-3">
+            <span className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span>
             {error}
           </div>
         )}
 
-        <div className="pt-4 border-t">
+        <div className="pt-6 border-t flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="text-left">
+             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Developer</p>
+             <p className="text-xs font-bold text-foreground">Build by <span className="text-primary">@Aptos_king</span></p>
+          </div>
           <Button 
             type="submit" 
             size="lg" 
-            className="w-full sm:w-auto font-semibold"
+            className="w-full sm:w-[280px] h-14 font-black uppercase tracking-widest text-xs bg-primary hover:bg-primary/90 text-white rounded-2xl shadow-xl shadow-primary/20 transition-all active:scale-95 disabled:opacity-50"
             disabled={loading || !file || !connected}
           >
             {loading ? (
               <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                Encrypting & Uploading to Shelby Protocol...
+                <Loader2 className="w-4 h-4 mr-3 animate-spin" />
+                Validating...
               </>
             ) : connected ? (
-              "Upload and Publish"
+              "Submit to Protocol"
             ) : (
-              "Connect Petra Wallet to Upload"
+              "Connect for Auth"
             )}
           </Button>
         </div>
+      </form>
+    </div>
       </form>
     </div>
   );

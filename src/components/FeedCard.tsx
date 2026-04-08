@@ -45,64 +45,68 @@ export function FeedCard({ blob: initialBlob }: { blob: BlobMetadata }) {
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-card/80 backdrop-blur border-border/50">
+    <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 bg-white border border-border group">
       <Link href={`/content/${blob.id}`}>
-        <div className="aspect-video bg-gradient-to-br from-muted to-muted/50 relative flex items-center justify-center group overflow-hidden">
+        <div className="aspect-video bg-[#F5F2EE] relative flex items-center justify-center overflow-hidden">
           {thumb ? (
-            <img src={thumb} alt={blob.title} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" />
+            <img src={thumb} alt={blob.title} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700" />
           ) : (
-            <div className="text-muted-foreground/30 group-hover:scale-110 group-hover:text-primary/40 transition-all duration-500">
+            <div className="text-muted-foreground/20 group-hover:scale-110 group-hover:text-primary/30 transition-all duration-700">
               {getIcon()}
             </div>
           )}
           {blob.price > 0 && (
-            <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-md rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-sm border border-border/50">
-              <Lock className="w-3.5 h-3.5 text-primary" />
-              <span className="text-xs font-semibold">{blob.price} SUSD</span>
+            <div className="absolute top-4 right-4 bg-primary text-white rounded-lg px-3 py-1.5 flex items-center gap-1.5 shadow-lg border border-white/20">
+              <Lock className="w-3.5 h-3.5" />
+              <span className="text-xs font-bold">{blob.price} SUSD</span>
             </div>
           )}
         </div>
       </Link>
       
-      <CardHeader className="p-5 pb-3">
+      <CardHeader className="p-6 pb-2">
         <div className="flex justify-between items-start gap-4">
-          <Link href={`/content/${blob.id}`} className="hover:underline flex-1">
-            <h3 className="font-bold text-lg leading-tight line-clamp-1">{blob.title}</h3>
+          <Link href={`/content/${blob.id}`} className="hover:text-primary transition-colors flex-1">
+            <h3 className="font-extrabold text-xl leading-tight line-clamp-1 tracking-tight">{blob.title}</h3>
           </Link>
-          <Badge variant={blob.price > 0 ? "default" : "secondary"} className="shrink-0 font-medium">
-            {blob.price > 0 ? 'Premium' : 'Free Demo'}
+          <Badge variant="secondary" className="shrink-0 font-bold bg-primary/5 text-primary border-primary/20">
+            {blob.price > 0 ? 'Settlement' : 'Free Entry'}
           </Badge>
         </div>
-        <div className="flex items-center text-xs text-muted-foreground mt-1.5 font-medium">
-          <Badge variant="outline" className="mr-2 text-[10px] uppercase tracking-wider">{blob.contentType}</Badge>
+        <div className="flex items-center text-[10px] text-muted-foreground mt-2 font-black uppercase tracking-widest">
+          <span className="text-primary mr-2">•</span>
+          {cType}
+          <span className="mx-2 opacity-30">|</span>
           {date}
         </div>
       </CardHeader>
       
-      <CardContent className="p-5 pt-0 pb-4">
-        <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{blob.description}</p>
+      <CardContent className="p-6 pt-2 pb-6">
+        <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2 h-10 italic">
+          "{blob.description}"
+        </p>
       </CardContent>
       
-      <CardFooter className="p-5 pt-4 flex justify-between items-center text-sm text-muted-foreground border-t border-border/40 bg-muted/10">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-primary/80 to-blue-500/80 flex items-center justify-center text-[10px] text-white font-bold">
-            {blob.creatorAddress.slice(2, 4)}
+      <CardFooter className="p-6 pt-5 flex justify-between items-center text-sm text-muted-foreground border-t border-border bg-[#FDFCFB]">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-sm bg-primary flex items-center justify-center text-[10px] text-white font-black">
+            {cAddress ? cAddress.slice(2, 4).toUpperCase() : "??"}
           </div>
-          <span className="font-semibold text-foreground/80 hover:text-foreground transition-colors cursor-pointer">{shortAddress}</span>
+          <span className="font-bold text-foreground hover:text-primary transition-colors cursor-pointer text-xs">{shortAddress}</span>
         </div>
-        <div className="flex items-center gap-3.5">
-          <span className="flex items-center gap-1.5 transition-colors cursor-default"><Eye className="w-4 h-4" /> {blob.views}</span>
+        <div className="flex items-center gap-4">
+          <span className="flex items-center gap-1.5 font-bold text-[11px]"><Eye className="w-4 h-4 text-primary opacity-60" /> {blob.views}</span>
           <button 
              onClick={handleLike}
-             className="flex items-center gap-1.5 hover:text-red-500 transition-colors cursor-pointer"
+             className="flex items-center gap-1.5 font-bold text-[11px] hover:text-primary transition-colors"
           >
-            <Heart className={`w-4 h-4 ${blob.likes > 0 ? "fill-red-500 text-red-500" : ""}`} /> {blob.likes}
+            <Heart className={`w-4 h-4 ${blob.likes > 0 ? "fill-primary text-primary" : "text-primary opacity-60"}`} /> {blob.likes}
           </button>
           <button 
              onClick={handleShare}
-             className="flex items-center gap-1.5 hover:text-foreground transition-colors cursor-pointer"
+             className="p-1 hover:bg-primary/10 rounded-md transition-colors"
           >
-            <Share2 className="w-4 h-4" />
+            <Share2 className="w-4 h-4 text-primary" />
           </button>
         </div>
       </CardFooter>

@@ -45,53 +45,57 @@ export default function Home() {
   });
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-7xl">
+    <div className="container mx-auto px-4 py-16 max-w-7xl">
       {/* Hero Section */}
-      <div className="mb-16 text-center">
-        <div className="inline-flex items-center justify-center px-4 py-1.5 mb-6 text-sm font-medium rounded-full bg-primary/10 text-primary border border-primary/20">
-          Powered by Shelby Protocol Testnet 🚀
+      <div className="mb-20 text-center">
+        <div className="inline-flex items-center justify-center px-5 py-2 mb-8 text-[11px] font-extrabold uppercase tracking-widest rounded-full bg-white border border-border shadow-sm text-muted-foreground">
+          <span className="w-2 h-2 rounded-full bg-primary mr-2 animate-pulse"></span>
+          Shelby Protocol Testnet Node v2.0
         </div>
-        <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 text-transparent bg-clip-text bg-gradient-to-br from-foreground via-foreground/90 to-muted-foreground">
-          Discover. Create. <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">Own.</span>
+        <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-8 text-foreground">
+          Blobs <span className="text-primary italic">Explored.</span>
         </h1>
-        <p className="text-lg md:text-xl text-muted-foreground/80 max-w-2xl mx-auto leading-relaxed mb-8">
-          The ultimate decentralized content marketplace. Upload your premium files, set pricing in ShelbyUSD, and get paid instantly.
+        <p className="text-lg md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-12 font-medium">
+          The decentralized settlement layer for premium verifiable content. Powered by ShelbyNet.
         </p>
 
-        {/* Storage Usage Tracker */}
-        <div className="max-w-md mx-auto bg-muted/30 border border-border/50 rounded-2xl p-5 backdrop-blur-sm shadow-inner relative overflow-hidden group">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
-                <HardDrive className="w-4 h-4" />
+        {/* Storage Usage Tracker - Branded Version */}
+        <div className="max-w-md mx-auto bg-white border border-border rounded-3xl p-6 shadow-xl shadow-primary/5 relative overflow-hidden group">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                <Database className="w-5 h-5" />
               </div>
-              <span className="text-sm font-semibold">Decentralized Storage Usage</span>
+              <span className="text-[13px] font-bold uppercase tracking-tight">Mainnet Storage Integrity</span>
             </div>
-            <span className="text-xs font-mono text-muted-foreground">{usedMB} MB / {STORAGE_LIMIT_MB} MB</span>
+            <span className="text-xs font-mono font-bold text-primary bg-primary/5 px-2 py-1 rounded-md">{usedMB} MB</span>
           </div>
-          <div className="w-full h-2.5 bg-background/50 rounded-full overflow-hidden border border-border/20">
+          <div className="w-full h-3 bg-muted rounded-full overflow-hidden p-0.5 border border-border/50">
             <div 
-              className="h-full bg-gradient-to-r from-primary via-blue-500 to-purple-600 transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+              className="h-full bg-primary transition-all duration-1000 ease-out rounded-full"
               style={{ width: `${percentUsed}%` }}
             />
           </div>
-          <div className="mt-2 text-[10px] text-muted-foreground text-center uppercase tracking-widest font-bold opacity-60">
-            {percentUsed > 90 ? "⚠️ Storage nearly full" : "Free Tier Active"}
+          <div className="mt-3 flex justify-between items-center text-[10px] text-muted-foreground uppercase tracking-widest font-extrabold px-1">
+            <span>Quota Used: {percentUsed.toFixed(1)}%</span>
+            <span className={percentUsed > 90 ? "text-destructive underline" : "text-primary opacity-80"}>
+              {percentUsed > 90 ? "Critical Cleanup Required" : "Ready for Ingestion"}
+            </span>
           </div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="flex gap-3 overflow-x-auto pb-6 mb-8 scrollbar-hide snap-x">
+      <div className="flex gap-4 overflow-x-auto pb-8 mb-4 scrollbar-hide snap-x justify-center">
         {FILTERS.map((f) => (
           <Button
             key={f}
-            variant={activeFilter === f ? "default" : "outline"}
+            variant={activeFilter === f ? "default" : "secondary"}
             onClick={() => setActiveFilter(f)}
-            className={`rounded-full snap-start whitespace-nowrap px-6 transition-all ${
+            className={`rounded-xl snap-start whitespace-nowrap px-8 h-12 font-bold transition-all ${
               activeFilter === f 
-                ? "shadow-md shadow-primary/20 scale-105" 
-                : "hover:bg-muted/50"
+                ? "bg-primary text-white shadow-lg shadow-primary/30 -translate-y-1" 
+                : "bg-white border border-border text-muted-foreground hover:border-primary/30 hover:text-primary"
             }`}
           >
             {f}
