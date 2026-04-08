@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
-import { downloadBlob, listBlobs, BlobMetadata, recordView, recordLike, followUser, getFollowCount } from "@/lib/shelby";
+import { downloadBlob, listBlobs, BlobMetadata, recordView, recordLike, followUser, getFollowCount, checkFollowStatus } from "@/lib/shelby";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Lock, Unlock, Download, Eye, Heart, Share2, Loader2, PlayCircle, UserCheck } from "lucide-react";
@@ -23,6 +23,7 @@ export default function ContentPage() {
   
   useEffect(() => {
     async function loadContent() {
+      if (!id) return;
       setLoading(true);
       try {
         const data = await listBlobs();
@@ -32,21 +33,27 @@ export default function ContentPage() {
           if (found.price === 0) {
             setIsUnlocked(true);
           }
-          // Record View
+          // 1. Record View (Now with real DB update)
           await recordView(id);
           
-          // Get Creator Follows
+          // 2. Get Creator Follows
           const count = await getFollowCount(found.creatorAddress);
           setFollowers(count);
+
+          // 3. Check if current user already follows (Persistence)
+          if (account?.address) {
+            const following = await checkFollowStatus(account.address.toString(), found.creatorAddress);
+            setIsFollowing(following);
+          }
         }
       } catch (err) {
-        console.error(err);
+        console.error("Load error:", err);
       } finally {
         setLoading(false);
       }
     }
     loadContent();
-  }, [id]);
+  }, [id, account?.address]);
 
   const handleLike = async () => {
     try {
@@ -147,7 +154,11 @@ export default function ContentPage() {
     );
   }
 
-  const shortAddress = `${blob.creatorAddress.slice(0, 6)}...${blob.creatorAddress.slice(-4)}`;
+  const thumb = blob?.thumbnailUrl || (blob as any)?.thumbnailurl;
+  const cType = blob?.contentType || (blob as any)?.contenttype;
+  const cAddress = blob?.creatorAddress || (blob as any)?.creatoraddress;
+
+  const shortAddress = cAddress ? `${cAddress.slice(0, 6)}...${cAddress.slice(-4)}` : "0xUnknown";
 
   return (
     <div className="container mx-auto px-4 py-10 max-w-5xl">
@@ -157,8 +168,8 @@ export default function ContentPage() {
         <div className="md:col-span-2 space-y-6">
           <div className="aspect-video bg-muted/30 border rounded-2xl overflow-hidden relative flex items-center justify-center bg-gradient-to-br from-background to-muted group">
              {isUnlocked ? (
-                blob.thumbnailUrl ? (
-                  <img src={blob.thumbnailUrl} alt={blob.title} className="object-contain w-full h-full" />
+                thumb ? (
+                  <img src={thumb} alt={blob?.title} className="object-contain w-full h-full" />
                 ) : (
                   <div className="text-center text-muted-foreground">
                     <PlayCircle className="w-16 h-16 mx-auto mb-4 opacity-50" />
@@ -173,7 +184,7 @@ export default function ContentPage() {
                   </div>
                   <h3 className="text-2xl font-bold mb-2">Premium Content</h3>
                   <p className="text-muted-foreground max-w-sm mb-6">
-                    Unlock full access to this {blob.contentType.toLowerCase()} by paying the creator directly via smart contract.
+                    Unlock full access to this {(cType || 'content').toLowerCase()} by paying the creator directly via smart contract.
                   </p>
                   <Button size="lg" onClick={handlePayment} disabled={isPaying || !connected}>
                     {isPaying ? (

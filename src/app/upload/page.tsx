@@ -30,7 +30,16 @@ export default function UploadPage() {
   const [error, setError] = useState("");
 
   const onDropMain = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles.length > 0) setFile(acceptedFiles[0]);
+    if (acceptedFiles.length > 0) {
+      const selectedFile = acceptedFiles[0];
+      setFile(selectedFile);
+      
+      // Auto-detect content type
+      if (selectedFile.type.startsWith('image/')) setContentType('Image');
+      else if (selectedFile.type.startsWith('video/')) setContentType('Video');
+      else if (selectedFile.name.endsWith('.pdf')) setContentType('Course');
+      else if (selectedFile.name.endsWith('.zip') || selectedFile.name.endsWith('.js') || selectedFile.name.endsWith('.ts')) setContentType('Source Code');
+    }
   }, []);
 
   const onDropPreview = useCallback((acceptedFiles: File[]) => {

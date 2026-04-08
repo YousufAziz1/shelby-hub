@@ -100,13 +100,18 @@ export const getStorageUsage = async () => {
 };
 
 export const recordView = async (id: string) => {
+  console.log("Recording view for", id);
   const { error } = await supabase.rpc('increment_views', { blob_id: id });
   if (error) console.error("View increment error", error);
 };
 
 export const recordLike = async (id: string) => {
+  console.log("Recording like for", id);
   const { error } = await supabase.rpc('increment_likes', { blob_id: id });
-  if (error) throw error;
+  if (error) {
+    console.error("Like increment error", error);
+    throw error;
+  }
 };
 
 export const followUser = async (follower: string, following: string) => {
@@ -114,9 +119,21 @@ export const followUser = async (follower: string, following: string) => {
     .from('follows')
     .insert([{ follower_address: follower, following_address: following }]);
   
-  if (error && error.code !== '23505') { // Ignore duplicate follow errors
+  if (error && error.code !== '23505') { 
+    console.error("Follow error", error);
     throw error;
   }
+};
+
+export const checkFollowStatus = async (follower: string, following: string) => {
+  const { data, error } = await supabase
+    .from('follows')
+    .select('*')
+    .eq('follower_address', follower)
+    .eq('following_address', following);
+    
+  if (error || !data) return false;
+  return data.length > 0;
 };
 
 export const getFollowCount = async (address: string) => {

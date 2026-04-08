@@ -7,7 +7,13 @@ import { useState } from 'react';
 
 export function FeedCard({ blob: initialBlob }: { blob: BlobMetadata }) {
   const [blob, setBlob] = useState(initialBlob);
-  const shortAddress = `${blob.creatorAddress.slice(0, 6)}...${blob.creatorAddress.slice(-4)}`;
+  
+  // Resilient property access for Supabase (handles both camelCase and lowercase)
+  const thumb = blob.thumbnailUrl || (blob as any).thumbnailurl;
+  const cType = blob.contentType || (blob as any).contenttype;
+  const cAddress = blob.creatorAddress || (blob as any).creatoraddress;
+  
+  const shortAddress = cAddress ? `${cAddress.slice(0, 6)}...${cAddress.slice(-4)}` : "0xUnknown";
   const date = new Date(blob.timestamp).toLocaleDateString();
 
   const handleLike = async (e: React.MouseEvent) => {
@@ -30,7 +36,7 @@ export function FeedCard({ blob: initialBlob }: { blob: BlobMetadata }) {
   };
 
   const getIcon = () => {
-    switch (blob.contentType) {
+    switch (cType) {
       case 'Image': return <ImageIcon className="w-12 h-12" />;
       case 'Video': return <Video className="w-12 h-12" />;
       case 'Source Code': return <Code className="w-12 h-12" />;
@@ -42,8 +48,8 @@ export function FeedCard({ blob: initialBlob }: { blob: BlobMetadata }) {
     <Card className="overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-card/80 backdrop-blur border-border/50">
       <Link href={`/content/${blob.id}`}>
         <div className="aspect-video bg-gradient-to-br from-muted to-muted/50 relative flex items-center justify-center group overflow-hidden">
-          {blob.thumbnailUrl ? (
-            <img src={blob.thumbnailUrl} alt={blob.title} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" />
+          {thumb ? (
+            <img src={thumb} alt={blob.title} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" />
           ) : (
             <div className="text-muted-foreground/30 group-hover:scale-110 group-hover:text-primary/40 transition-all duration-500">
               {getIcon()}
