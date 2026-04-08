@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { UploadCloud, File as FileIcon, X, Loader2, CheckCircle2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { UploadCloud, File as FileIcon, X, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 const CONTENT_TYPES = ["Image", "Video", "Course", "Source Code", "Other"];
