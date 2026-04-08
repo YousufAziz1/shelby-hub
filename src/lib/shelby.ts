@@ -17,8 +17,8 @@ export interface BlobMetadata {
   isPublic: boolean;
 }
 
-// Temporary Mock Database for Testnet UI testing
-export const mockBlobs: BlobMetadata[] = [
+// Initial Mock Data
+const INITIAL_BLOBS: BlobMetadata[] = [
   {
     id: "blob_1",
     title: "Intro to Aptos Move",
@@ -36,59 +36,65 @@ export const mockBlobs: BlobMetadata[] = [
     title: "Shelby Architecture Diagram",
     description: "High resolution diagram of the protocol.",
     contentType: "Image",
-    price: 5, // 5 ShelbyUSD
+    price: 5,
     creatorAddress: "0x456...def",
     timestamp: Date.now() - 172800000,
     likes: 45,
     views: 300,
     isPublic: true,
-  },
-  {
-    id: "blob_3",
-    title: "Web3 Toolkit",
-    description: "Useful code snippets for web3 apps.",
-    contentType: "Source Code",
-    price: 15,
-    creatorAddress: "0x789...ghi",
-    timestamp: Date.now() - 400000000,
-    likes: 80,
-    views: 900,
-    isPublic: true,
   }
 ];
 
+// Helper to get blobs from localStorage (Client-side only)
+const getStoredBlobs = (): BlobMetadata[] => {
+  if (typeof window === "undefined") return INITIAL_BLOBS;
+  const stored = localStorage.getItem("shelby_blobs");
+  if (!stored) {
+    localStorage.setItem("shelby_blobs", JSON.stringify(INITIAL_BLOBS));
+    return INITIAL_BLOBS;
+  }
+  return JSON.parse(stored);
+};
+
+// Helper to save blobs
+const saveBlobs = (blobs: BlobMetadata[]) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("shelby_blobs", JSON.stringify(blobs));
+  }
+};
+
 export const uploadBlob = async (payload: { data: ArrayBuffer | File, mimeType: string, metadata?: Partial<BlobMetadata> }) => {
-  console.log("Mocking SDK uploadBlob", payload);
-  // Real implementation: 
-  // const client = new ShelbyClient({...});
-  // return await client.uploadBlob({ data: payload.data, mimeType: payload.mimeType, metadata: payload.metadata });
+  console.log("Saving to local storage (Mock SDK)", payload);
   
-  // Simulate delay
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   
-  return { 
-    id: `blob_${Date.now()}`, 
-    ...payload.metadata 
+  const newBlob: BlobMetadata = {
+    id: `blob_${Date.now()}`,
+    title: payload.metadata?.title || "Untitled",
+    description: payload.metadata?.description || "",
+    contentType: payload.metadata?.contentType || "Other",
+    price: payload.metadata?.price || 0,
+    creatorAddress: payload.metadata?.creatorAddress || "0xUnknown",
+    timestamp: Date.now(),
+    likes: 0,
+    views: 0,
+    isPublic: true,
+    ...payload.metadata
   };
+
+  const currentBlobs = getStoredBlobs();
+  saveBlobs([newBlob, ...currentBlobs]);
+  
+  return newBlob;
 };
 
 export const listBlobs = async (params: { limit?: number, filter?: any } = {}) => {
-  console.log("Mocking SDK listBlobs", params);
-  
-  // Real implementation:
-  // const client = new ShelbyClient({...});
-  // const blobs = await client.listBlobs({ limit: params.limit, filter: params.filter });
-  
-  // Try real fetch logic mentally, fallback to mock:
-  return mockBlobs; 
+  console.log("Fetching blobs", params);
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  return getStoredBlobs(); 
 };
 
 export const downloadBlob = async (id: string) => {
-  console.log("Mocking SDK downloadBlob", { id });
-  
-  // Real implementation:
-  // const client = new ShelbyClient({...});
-  // return await client.downloadBlob(id);
-  
+  console.log("Downloading", id);
   return new ArrayBuffer(0); 
 };
