@@ -45,66 +45,71 @@ export function FeedCard({ blob: initialBlob }: { blob: BlobMetadata }) {
   };
 
   return (
-    <Card className="overflow-hidden bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 group">
+    <Card className="overflow-hidden bg-zinc-900 border-none rounded-[2rem] shadow-2xl hover:shadow-primary/20 transition-all duration-500 group relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
+      
       <Link href={`/content/${blob.id}`}>
-        <div className="aspect-video bg-slate-50 relative flex items-center justify-center overflow-hidden border-b border-slate-100">
+        <div className="aspect-[4/5] bg-zinc-800 relative flex items-center justify-center overflow-hidden">
           {thumb ? (
-            <img src={thumb} alt={blob.title} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
+            <img src={thumb} alt={blob.title} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-1000" />
           ) : (
-            <div className="text-slate-300 group-hover:text-slate-400 transition-colors duration-500">
+            <div className="text-zinc-700 group-hover:text-primary transition-colors duration-500 scale-150">
               {getIcon()}
             </div>
           )}
+          
+          {/* Top Overlays */}
+          <div className="absolute top-4 left-4 z-20">
+             <Badge className="bg-black/40 backdrop-blur-md text-white border-white/10 font-black text-[10px] uppercase tracking-widest px-3 py-1">
+                {cType}
+             </Badge>
+          </div>
+          
           {blob.price > 0 && (
-            <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-slate-900 rounded-lg px-2.5 py-1 flex items-center gap-1.5 shadow-sm border border-slate-200">
-              <Lock className="w-3.5 h-3.5 text-slate-500" />
-              <span className="text-[11px] font-bold">{blob.price} SUSD</span>
+            <div className="absolute top-4 right-4 z-20 bg-primary text-white rounded-full px-4 py-1.5 flex items-center gap-2 shadow-[0_0_20px_rgba(255,20,147,0.4)]">
+              <Lock className="w-3.5 h-3.5" />
+              <span className="text-xs font-black">{blob.price} SUSD</span>
             </div>
           )}
+
+          {/* Bottom Info Overlay */}
+          <div className="absolute bottom-0 left-0 right-0 p-8 z-20 transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+             <h3 className="text-2xl font-black text-white leading-tight mb-2 tracking-tighter">{blob.title}</h3>
+             <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-[10px] text-white font-black">
+                  {cAddress ? cAddress.slice(2, 4).toUpperCase() : "??"}
+                </div>
+                <span className="text-xs font-bold text-zinc-300">{shortAddress}</span>
+             </div>
+          </div>
         </div>
       </Link>
       
-      <div className="p-6">
-        <div className="flex justify-between items-start gap-4 mb-2">
-          <Link href={`/content/${blob.id}`} className="hover:text-primary transition-colors flex-1">
-            <h3 className="font-bold text-lg text-slate-900 leading-tight line-clamp-1">{blob.title}</h3>
-          </Link>
-          <Badge variant="secondary" className="shrink-0 font-bold bg-slate-100 text-slate-600 border-none px-2 py-0 h-5 text-[10px] uppercase">
-            {cType}
-          </Badge>
-        </div>
-        <p className="text-sm text-slate-500 leading-relaxed line-clamp-2 h-10 mb-6">
-          {blob.description}
-        </p>
+      {/* Social Actions (Visible on Hover/Mobile) */}
+      <div className="absolute right-4 bottom-24 z-30 flex flex-col gap-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <button 
+           onClick={handleLike}
+           className="flex flex-col items-center gap-1 group/btn"
+        >
+          <div className={`p-3 rounded-full backdrop-blur-md border border-white/10 transition-all ${blob.likes > 0 ? "bg-primary text-white scale-110 shadow-[0_0_15px_rgba(255,20,147,0.5)]" : "bg-black/40 text-white hover:bg-primary"}`}>
+            <Heart className={`w-5 h-5 ${blob.likes > 0 ? "fill-white" : ""}`} />
+          </div>
+          <span className="text-[10px] font-black text-white shadow-black drop-shadow-md">{blob.likes}</span>
+        </button>
         
-        <div className="flex justify-between items-center pt-5 border-t border-slate-100">
-          <div className="flex items-center gap-2.5">
-            <div className="w-6 h-6 rounded-md bg-slate-100 flex items-center justify-center text-[10px] text-slate-600 font-bold">
-              {cAddress ? cAddress.slice(2, 4).toUpperCase() : "??"}
-            </div>
-            <span className="font-semibold text-slate-500 text-[11px] truncate w-20">{shortAddress}</span>
+        <div className="flex flex-col items-center gap-1">
+          <div className="p-3 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white">
+            <Eye className="w-5 h-5" />
           </div>
-          
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1 text-[11px] font-bold text-slate-400">
-              <Eye className="w-3.5 h-3.5" />
-              {blob.views}
-            </div>
-            <button 
-               onClick={handleLike}
-               className="flex items-center gap-1 text-[11px] font-bold text-slate-400 hover:text-red-500 transition-colors"
-            >
-              <Heart className={`w-3.5 h-3.5 ${blob.likes > 0 ? "fill-red-500 text-red-500" : ""}`} />
-              {blob.likes}
-            </button>
-            <button 
-               onClick={handleShare}
-               className="p-1 hover:bg-slate-50 rounded-md transition-colors text-slate-400 hover:text-slate-900"
-            >
-              <Share2 className="w-3.5 h-3.5" />
-            </button>
-          </div>
+          <span className="text-[10px] font-black text-white shadow-black drop-shadow-md">{blob.views}</span>
         </div>
+
+        <button 
+           onClick={handleShare}
+           className="p-3 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:bg-white hover:text-black transition-all"
+        >
+          <Share2 className="w-5 h-5" />
+        </button>
       </div>
     </Card>
   );

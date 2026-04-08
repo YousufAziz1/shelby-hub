@@ -177,162 +177,167 @@ export default function UploadPage() {
   }
 
   return (
-    <div className="container mx-auto px-6 py-16 max-w-3xl">
-      <div className="mb-12">
-        <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-3">Mint Asset</h1>
-        <p className="text-slate-500 font-medium">Ingest premium content into the Shelby settlement layer.</p>
+    <div className="container mx-auto px-6 py-24 max-w-4xl relative">
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -z-10"></div>
+      
+      <div className="mb-16 text-center">
+        <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter mb-6">
+          Mint Your <span className="text-primary italic">Legacy.</span>
+        </h1>
+        <p className="text-xl text-zinc-500 font-medium max-w-2xl mx-auto">
+          Ingest high-fidelity assets into the Shelby Protocol settlement layer.
+        </p>
       </div>
 
-      <form onSubmit={handleUpload} className="space-y-8">
-        <Card className="border-slate-200 bg-white shadow-sm rounded-2xl overflow-hidden">
-          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
-            <CardTitle className="text-lg font-bold text-slate-900">Payload Configuration</CardTitle>
-            <CardDescription className="text-slate-500 font-medium text-xs">Standard data packet for protocol validation.</CardDescription>
-          </CardHeader>
-          <CardContent className="p-8">
+      <form onSubmit={handleUpload} className="space-y-12">
+        <Card className="border-white/5 bg-zinc-900/40 backdrop-blur-2xl rounded-[3rem] overflow-hidden p-10 shadow-2xl">
+          <div className="flex flex-col items-center gap-10">
             {!file ? (
               <div 
                 {...dropzoneMain.getRootProps()} 
-                className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-200 ${dropzoneMain.isDragActive ? 'border-primary bg-primary/5' : 'border-slate-200 hover:border-slate-400 hover:bg-slate-50'}`}
+                className={`w-full border-4 border-dashed rounded-[2.5rem] p-20 text-center cursor-pointer transition-all duration-500 ${dropzoneMain.isDragActive ? 'border-primary bg-primary/10' : 'border-zinc-800 hover:border-primary/40 hover:bg-white/5'}`}
               >
                 <input {...dropzoneMain.getInputProps()} />
-                <div className="w-12 h-12 bg-slate-100 text-slate-400 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <UploadCloud className="w-6 h-6" />
+                <div className="w-20 h-20 bg-primary/20 text-primary rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-[0_0_30px_rgba(255,20,147,0.3)]">
+                  <UploadCloud className="w-10 h-10" />
                 </div>
-                <p className="font-bold text-slate-900 mb-1">Upload primary file</p>
-                <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Supports any format up to 2GB</p>
+                <h3 className="text-2xl font-black text-white mb-2">Deploy Payload</h3>
+                <p className="text-sm text-zinc-500 font-bold uppercase tracking-widest">Supports binary ingestion up to 2GB</p>
               </div>
             ) : (
-              <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="p-2.5 bg-slate-900 rounded-lg text-white">
-                    <FileIcon className="w-5 h-5" />
+              <div className="w-full bg-primary/5 p-8 rounded-[2rem] border border-primary/20 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-inner">
+                <div className="flex items-center gap-6">
+                  <div className="p-5 bg-primary rounded-2xl text-white shadow-[0_0_20px_rgba(255,20,147,0.4)]">
+                    <FileIcon className="w-8 h-8" />
                   </div>
-                  <div>
-                    <p className="font-bold text-sm text-slate-900 truncate max-w-[200px]">{file.name}</p>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{(file.size / 1024 / 1024).toFixed(2)} MB Payload</p>
+                  <div className="text-left">
+                    <p className="font-black text-xl text-white truncate max-w-[200px] sm:max-w-md">{file.name}</p>
+                    <div className="flex gap-3 items-center mt-1">
+                      <Badge className="bg-primary/20 text-primary border-none text-[10px] font-black">{(file.size / 1024 / 1024).toFixed(2)} MB</Badge>
+                      <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest">Metadata Verified</span>
+                    </div>
                   </div>
                 </div>
-                <Button type="button" variant="ghost" size="icon" onClick={() => setFile(null)} className="h-8 w-8 text-slate-400 hover:text-slate-900">
-                  <X className="w-4 h-4" />
+                <Button type="button" variant="ghost" size="icon" onClick={() => setFile(null)} className="h-12 w-12 text-zinc-500 hover:text-white hover:bg-white/5 bg-black/20 rounded-xl">
+                  <X className="w-6 h-6" />
                 </Button>
               </div>
             )}
-          </CardContent>
-        </Card>
+            
+            <div className="w-full grid md:grid-cols-2 gap-10">
+              <div className="space-y-8 md:col-span-2">
+                <div className="space-y-3">
+                  <Label htmlFor="title" className="text-xs font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Blob Title</Label>
+                  <Input 
+                    id="title" 
+                    className="h-14 rounded-2xl bg-white/5 border-white/5 focus:ring-primary focus:border-primary font-bold text-white text-lg px-6"
+                    placeholder="Enter ingestion name..."
+                    value={title} 
+                    onChange={(e) => setTitle(e.target.value)} 
+                  />
+                </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="space-y-6 md:col-span-2">
-            <div className="space-y-2">
-              <Label htmlFor="title" className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Asset Title</Label>
-              <Input 
-                id="title" 
-                className="h-11 rounded-xl bg-white border-slate-200 focus:ring-slate-900 focus:border-slate-900 font-medium"
-                value={title} 
-                onChange={(e) => setTitle(e.target.value)} 
-              />
-            </div>
+                <div className="space-y-3">
+                  <Label htmlFor="description" className="text-xs font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Asset Manifesto</Label>
+                  <Textarea 
+                    id="description" 
+                    rows={4} 
+                    className="resize-none rounded-2xl bg-white/5 border-white/5 focus:ring-primary focus:border-primary font-medium text-white px-6 py-4"
+                    placeholder="Describe your digital footprint..."
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                </div>
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description" className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Description Memo</Label>
-              <Textarea 
-                id="description" 
-                rows={4} 
-                className="resize-none rounded-xl bg-white border-slate-200 focus:ring-slate-900 focus:border-slate-900 font-medium"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </div>
-          </div>
+              <div className="space-y-3">
+                <Label htmlFor="contentType" className="text-xs font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Payload Class</Label>
+                <select 
+                  id="contentType" 
+                  className="flex h-14 w-full items-center justify-between rounded-2xl border border-white/5 bg-white/5 px-6 py-2 text-sm font-black text-white focus:outline-none focus:ring-2 focus:ring-primary/20 appearance-none transition-all"
+                  value={contentType}
+                  onChange={(e) => setContentType(e.target.value)}
+                >
+                  {CONTENT_TYPES.map(type => (
+                    <option key={type} value={type} className="bg-zinc-900">{type}</option>
+                  ))}
+                </select>
+              </div>
 
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="contentType" className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Classification</Label>
-              <select 
-                id="contentType" 
-                className="flex h-11 w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold shadow-sm focus:outline-none appearance-none text-slate-900"
-                value={contentType}
-                onChange={(e) => setContentType(e.target.value)}
-              >
-                {CONTENT_TYPES.map(type => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="price" className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Settlement Price (SUSD)</Label>
-              <div className="relative">
-                <Input 
-                  id="price" 
-                  type="number" 
-                  className="pl-10 h-11 rounded-xl bg-white border-slate-200 focus:ring-slate-900 font-bold"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                />
-                <span className="absolute left-4 top-3 text-slate-300 font-bold">$</span>
+              <div className="space-y-3">
+                <Label htmlFor="price" className="text-xs font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Settlement (SUSD)</Label>
+                <div className="relative">
+                  <Input 
+                    id="price" 
+                    type="number" 
+                    className="pl-12 h-14 rounded-2xl bg-white/5 border-white/5 focus:ring-primary font-black text-white text-lg"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                  />
+                  <span className="absolute left-6 top-4 text-primary font-black">$</span>
+                </div>
               </div>
             </div>
+            
+            <div className="w-full pt-6">
+               <div className="grid sm:grid-cols-2 gap-4">
+                  <label className="flex items-center gap-4 p-6 bg-white/5 border border-white/5 rounded-2xl cursor-pointer hover:bg-white/10 transition-all border-zinc-800">
+                    <input 
+                      type="checkbox" 
+                      className="w-6 h-6 rounded-lg border-zinc-700 text-primary focus:ring-primary accent-primary"
+                      checked={isPublic}
+                      onChange={(e) => setIsPublic(e.target.checked)}
+                    />
+                    <div className="text-left">
+                      <span className="font-black text-sm block text-white">Broadcast Public</span>
+                      <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5">Global Explorer Sync</span>
+                    </div>
+                  </label>
+                  <label className="flex items-center gap-4 p-6 bg-white/5 border border-white/5 rounded-2xl cursor-pointer hover:bg-white/10 transition-all border-zinc-800">
+                    <input 
+                      type="checkbox" 
+                      className="w-6 h-6 rounded-lg border-zinc-700 text-primary focus:ring-primary accent-primary"
+                      checked={mintNft}
+                      onChange={(e) => setMintNft(e.target.checked)}
+                    />
+                    <div className="text-left">
+                      <span className="font-black text-sm block text-white">Mint Provenance</span>
+                      <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5">Immutable NFT Record</span>
+                    </div>
+                  </label>
+               </div>
+            </div>
           </div>
-
-          <div className="space-y-6">
-             <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Node Configuration</Label>
-             <div className="p-5 bg-white border border-slate-200 rounded-xl space-y-4">
-                <label className="flex items-start gap-3 cursor-pointer group">
-                  <input 
-                    type="checkbox" 
-                    className="mt-1 w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 accent-slate-900"
-                    checked={isPublic}
-                    onChange={(e) => setIsPublic(e.target.checked)}
-                  />
-                  <div>
-                    <span className="font-bold text-sm block text-slate-900">Broadcast to Explorer</span>
-                    <span className="text-[11px] text-slate-400 font-medium">Make this asset visible on the global feed.</span>
-                  </div>
-                </label>
-                <label className="flex items-start gap-3 cursor-pointer group">
-                  <input 
-                    type="checkbox" 
-                    className="mt-1 w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 accent-slate-900"
-                    checked={mintNft}
-                    onChange={(e) => setMintNft(e.target.checked)}
-                  />
-                  <div>
-                    <span className="font-bold text-sm block text-slate-900">Mint Verified NFT</span>
-                    <span className="text-[11px] text-slate-400 font-medium">Immutable on-chain record for provenance.</span>
-                  </div>
-                </label>
-             </div>
-          </div>
-        </div>
+        </Card>
 
         {error && (
-          <div className="bg-red-50 border border-red-100 text-red-600 px-5 py-4 rounded-xl text-sm font-bold flex items-center gap-3">
-            <div className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></div>
+          <div className="bg-primary/5 border border-primary/20 text-primary px-8 py-6 rounded-3xl text-sm font-black flex items-center gap-4 animate-bounce">
+            <div className="w-2 h-2 bg-primary rounded-full shadow-[0_0_10px_rgba(255,20,147,1)]"></div>
             {error}
           </div>
         )}
 
-        <div className="pt-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-8">
-          <div>
-             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Protocol Architect</p>
-             <p className="text-sm font-bold text-slate-900">Build by <span className="text-primary font-black animate-pulse">@Aptos_king</span></p>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-10">
+          <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
+             <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-white font-black shadow-[0_0_20px_rgba(255,20,147,0.3)]">AK</div>
+             <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 leading-none mb-1.5">Architect</p>
+                <p className="text-sm font-black text-white">Build by <span className="text-primary italic">@Aptos_king</span></p>
+             </div>
           </div>
+          
           <Button 
             type="submit" 
             size="lg" 
-            className="w-full sm:w-[240px] h-12 font-bold bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-sm transition-all active:scale-95 disabled:opacity-50"
+            className="w-full md:w-[320px] h-20 font-black uppercase tracking-widest text-sm bg-primary hover:bg-primary/90 text-white rounded-3xl shadow-[0_20px_40px_rgba(255,20,147,0.3)] transition-all active:scale-95 disabled:opacity-50"
             disabled={loading || !file || !connected}
           >
             {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Processing...
-              </>
+              <><Loader2 className="w-6 h-6 mr-3 animate-spin" /> Ingesting...</>
             ) : connected ? (
-              "Mint and Publish"
+              "Mint & Broadcast"
             ) : (
-              "Connect for Auth"
+              "Auth Session Required"
             )}
           </Button>
         </div>

@@ -176,145 +176,158 @@ export default function ContentPage() {
   const shortAddress = cAddress ? `${cAddress.slice(0, 6)}...${cAddress.slice(-4)}` : "0xUnknown";
 
   return (
-    <div className="container mx-auto px-6 py-16 max-w-6xl">
-      <div className="grid lg:grid-cols-3 gap-16">
+    <div className="container mx-auto px-6 py-24 max-w-7xl relative">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[150px] -z-10 rounded-full"></div>
+      
+      <div className="grid lg:grid-cols-12 gap-16">
         
-        {/* Left Col - Media / Preview */}
-        <div className="lg:col-span-2 space-y-10">
-          <div className="aspect-video bg-slate-50 border border-slate-200 rounded-[2rem] overflow-hidden relative flex items-center justify-center shadow-sm group">
+        {/* Left Column: Immersive Media */}
+        <div className="lg:col-span-8 space-y-12">
+          <div className="aspect-video bg-zinc-900 border border-white/5 rounded-[3rem] overflow-hidden relative flex items-center justify-center shadow-2xl group">
              {isUnlocked ? (
                 thumb ? (
-                  <img src={thumb} alt={blob?.title} className="object-contain w-full h-full" />
+                  <img src={thumb} alt={blob?.title} className="object-contain w-full h-full group-hover:scale-105 transition-transform duration-1000" />
                 ) : (
-                  <div className="text-center">
-                    <PlayCircle className="w-16 h-16 mx-auto mb-4 text-slate-200" />
-                    <p className="font-bold text-xl text-slate-900">Content Verified</p>
-                    <p className="text-sm text-slate-400 font-medium mt-1">Ready for protocol download.</p>
+                  <div className="text-center p-12">
+                    <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <PlayCircle className="w-10 h-10 text-primary" />
+                    </div>
+                    <p className="font-black text-2xl text-white tracking-widest uppercase">Blob Verified</p>
+                    <p className="text-sm text-zinc-500 font-bold mt-2">Ready for local decryption cycle.</p>
                   </div>
                 )
              ) : (
-                <div className="absolute inset-0 bg-white/60 backdrop-blur-xl flex flex-col items-center justify-center p-8 text-center">
-                  <div className="w-20 h-20 rounded-3xl bg-slate-900 flex items-center justify-center mb-8 shadow-2xl">
-                    <Lock className="w-8 h-8 text-white" />
+                <div className="absolute inset-0 bg-black/40 backdrop-blur-2xl flex flex-col items-center justify-center p-12 text-center">
+                  <div className="w-24 h-24 rounded-[2rem] bg-primary flex items-center justify-center mb-10 shadow-[0_0_40px_rgba(255,20,147,0.5)] animate-pulse">
+                    <Lock className="w-10 h-10 text-white" />
                   </div>
-                  <h3 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">Settlement Required</h3>
-                  <p className="text-slate-500 max-w-sm mb-10 font-medium leading-relaxed">
-                    Access to this {(cType || 'content').toLowerCase()} requires decentralized ingestion settlement.
+                  <h3 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter">Settlement Required</h3>
+                  <p className="text-zinc-400 max-w-sm mb-12 font-medium leading-relaxed text-lg">
+                    This premium {(cType || 'content').toLowerCase()} requires decentralized node settlement for full ingestion.
                   </p>
                   <Button 
                     size="lg" 
                     onClick={handlePayment} 
                     disabled={isPaying || !connected}
-                    className="h-14 px-10 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold transition-all active:scale-95"
+                    className="h-20 px-16 rounded-[2rem] bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest text-sm shadow-[0_20px_40px_rgba(255,20,147,0.3)] transition-all active:scale-95"
                   >
                     {isPaying ? (
-                      <><Loader2 className="w-5 h-5 mr-3 animate-spin" /> Processing...</>
+                      <><Loader2 className="w-5 h-5 mr-3 animate-spin" /> Node Syncing...</>
                     ) : (
-                      <>Settle {blob.price} SUSD</>
+                      <>Unlock for {blob.price} SUSD</>
                     )}
                   </Button>
                   {!connected && (
-                    <p className="text-[10px] text-slate-400 mt-5 font-bold uppercase tracking-wider">Authentication Required</p>
+                    <p className="text-[10px] text-zinc-600 mt-6 font-black uppercase tracking-[0.3em]">Authentication Required</p>
                   )}
                 </div>
              )}
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-6">
             <Button 
                 variant="outline" 
-                className="flex-1 h-12 rounded-xl font-bold border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all" 
+                className="flex-1 h-16 rounded-2xl font-black uppercase tracking-widest text-xs border-white/5 bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-all" 
                 onClick={handleDownload} 
                 disabled={!isUnlocked}
             >
-              <Download className="w-4 h-4 mr-2" /> Download Asset
+              <Download className="w-5 h-5 mr-3" /> Download Payload
             </Button>
             {cType === 'Video' && isUnlocked && (
-              <Button className="flex-1 h-12 rounded-xl bg-slate-900 text-white font-bold">
-                <PlayCircle className="w-4 h-4 mr-2" /> Play Stream
+              <Button className="flex-1 h-16 rounded-2xl bg-white text-black font-black uppercase tracking-widest text-xs hover:bg-zinc-200 transition-all shadow-xl">
+                <PlayCircle className="w-5 h-5 mr-3" /> Play Broadcast
               </Button>
             )}
           </div>
         </div>
 
-        {/* Right Col - Meta & Brand */}
-        <div className="space-y-10">
-          <div className="space-y-4">
-             <Badge className="bg-slate-100 text-slate-600 border-none hover:bg-slate-100 font-bold uppercase tracking-wider text-[10px] py-1 px-3">Protocol Verified</Badge>
-             <h1 className="text-4xl font-bold tracking-tight text-slate-900 leading-[1.2]">{blob.title}</h1>
+        {/* Right Column: Metadata & Engagement */}
+        <div className="lg:col-span-4 space-y-12">
+          <div className="space-y-6">
+             <Badge className="bg-primary text-white border-none font-black uppercase tracking-[0.2em] text-[10px] py-1.5 px-4 shadow-[0_0_15px_rgba(255,20,147,0.4)]">Verified Asset</Badge>
+             <h1 className="text-5xl font-black tracking-tighter text-white leading-[1.1]">{blob.title}</h1>
           </div>
           
-          <div className="flex items-center justify-between bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="flex items-center justify-between bg-zinc-900 border border-white/5 p-6 rounded-[2rem] shadow-2xl">
              <div className="flex items-center gap-4">
-               <div className="w-10 h-10 rounded-lg bg-slate-100 flex justify-center items-center font-bold text-slate-600 shadow-inner text-xs">
+               <div className="w-14 h-14 rounded-2xl bg-primary flex justify-center items-center font-black text-white shadow-lg text-sm">
                  {cAddress ? cAddress.slice(2, 4).toUpperCase() : "??"}
                </div>
                <div>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider leading-none mb-1.5">Creator</p>
-                  <p className="font-bold text-slate-900 truncate w-24 sm:w-auto text-sm">{shortAddress}</p>
+                  <p className="text-[10px] text-zinc-600 font-black uppercase tracking-widest leading-none mb-2">Architect</p>
+                  <p className="font-black text-white text-lg leading-none">{shortAddress}</p>
+                  <p className="text-[10px] text-primary font-black uppercase mt-1.5">{followers} Followers</p>
                </div>
              </div>
              <Button 
                 variant={isFollowing ? "secondary" : "outline"} 
                 size="sm" 
-                className={`rounded-lg font-bold h-9 px-4 text-xs transition-all ${isFollowing ? "bg-slate-100 text-slate-500 border-none" : "border-slate-200 text-slate-600 hover:bg-slate-50"}`}
+                className={`rounded-xl font-black uppercase tracking-widest text-[10px] h-10 px-6 transition-all ${isFollowing ? "bg-zinc-800 text-zinc-500 border-none" : "border-primary/20 text-primary hover:bg-primary/10"}`}
                 onClick={handleFollow}
                 disabled={isFollowing}
              >
-                {isFollowing ? "Following" : "Follow"}
+                {isFollowing ? "Followed" : "Follow"}
              </Button>
           </div>
 
-          <Card className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-             <CardHeader className="bg-slate-50/50 border-b border-slate-100 p-5">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Asset Manifest</p>
-             </CardHeader>
-             <CardContent className="p-6 space-y-6">
+          <Card className="bg-white/5 border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">
+             <div className="p-8 space-y-8">
                 <div>
-                   <p className="text-sm text-slate-600 leading-relaxed font-medium">
-                      {blob.description}
+                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 mb-4">Core Manifesto</p>
+                   <p className="text-lg text-zinc-300 leading-relaxed font-medium">
+                      "{blob.description || "No metadata manifest provided for this ingestion cycle."}"
                    </p>
                 </div>
 
-                <div className="space-y-4 pt-6 border-t border-slate-100">
-                  <div className="flex justify-between text-[11px] font-bold uppercase tracking-wider">
-                    <span className="text-slate-400">Settlement</span>
-                    <span className="text-slate-900">{blob.price === 0 ? "Open Access" : `${blob.price} SUSD`}</span>
+                <div className="space-y-5 pt-8 border-t border-white/5">
+                  <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest outline-none">
+                    <span className="text-zinc-600">Settlement Type</span>
+                    <span className="text-primary">{blob.price === 0 ? "Global Access" : "Premium Tier"}</span>
                   </div>
-                  <div className="flex justify-between text-[11px] font-bold uppercase tracking-wider">
-                    <span className="text-slate-400">Type</span>
-                    <span className="text-slate-900">{cType}</span>
+                  <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest outline-none">
+                    <span className="text-zinc-600">Ingestion Timestamp</span>
+                    <span className="text-white">{new Date(blob.timestamp).toLocaleDateString()}</span>
                   </div>
-                  <div className="flex justify-between text-[11px] font-bold uppercase tracking-wider">
-                    <span className="text-slate-400">Published</span>
-                    <span className="text-slate-900">{new Date(blob.timestamp).toLocaleDateString()}</span>
+                  <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest outline-none">
+                    <span className="text-zinc-600">Content Classification</span>
+                    <span className="text-primary">{cType}</span>
                   </div>
                 </div>
-             </CardContent>
+             </div>
           </Card>
 
-          <div className="flex justify-between items-center py-4 px-2">
-            <div className="flex gap-8">
+          <div className="flex justify-between items-center px-4">
+            <div className="flex gap-10">
               <button 
                  onClick={handleLike}
-                 className="flex items-center gap-2 font-bold text-xs text-slate-400 hover:text-red-500 transition-colors"
+                 className="flex flex-col items-center gap-1.5 group"
               >
-                <Heart className={`w-4 h-4 ${blob.likes > 0 ? "fill-red-500 text-red-500" : ""}`} /> {blob.likes}
+                <div className={`p-4 rounded-full transition-all ${blob.likes > 0 ? "bg-primary text-white shadow-[0_0_20px_rgba(255,20,147,0.4)]" : "bg-white/5 text-zinc-500 hover:bg-white/10 hover:text-white"}`}>
+                  <Heart className={`w-6 h-6 ${blob.likes > 0 ? "fill-white" : ""}`} />
+                </div>
+                <span className="text-xs font-black text-zinc-500 group-hover:text-white">{blob.likes}</span>
               </button>
-              <div className="flex items-center gap-2 font-bold text-xs text-slate-400">
-                <Eye className="w-4 h-4" /> {blob.views}
+              <div className="flex flex-col items-center gap-1.5">
+                <div className="p-4 rounded-full bg-white/5 text-zinc-500">
+                  <Eye className="w-6 h-6" />
+                </div>
+                <span className="text-xs font-black text-zinc-500">{blob.views}</span>
               </div>
             </div>
             <button 
                onClick={handleShare}
-               className="flex items-center gap-2 font-bold text-xs text-slate-400 hover:text-slate-900 transition-colors"
+               className="flex flex-col items-center gap-1.5 group"
             >
-              <Share2 className="w-4 h-4" /> Share
+              <div className="p-4 rounded-full bg-white/5 text-zinc-500 hover:bg-white/10 hover:text-white transition-all">
+                <Share2 className="w-6 h-6" />
+              </div>
+              <span className="text-xs font-black text-zinc-500 group-hover:text-white">Share</span>
             </button>
           </div>
 
-          <div className="pt-8 border-t border-slate-100 text-center">
-             <p className="text-xs font-bold text-slate-900">Build by <span className="text-primary font-black">@Aptos_king</span></p>
+          <div className="pt-12 border-t border-white/5 text-center">
+             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-700 mb-3">Protocol Architect</p>
+             <p className="text-lg font-black text-white">Build by <span className="text-primary italic">@Aptos_king</span></p>
           </div>
         </div>
       </div>
