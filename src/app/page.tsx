@@ -72,36 +72,36 @@ export default function Home() {
           </p>
 
           <div className="max-w-md mx-auto pt-10">
-             <div className="bg-[#020617] border border-white/5 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+             <div className="bg-surface/40 backdrop-blur-xl border border-divider rounded-[2rem] p-8 shadow-2xl relative overflow-hidden group transition-colors duration-500">
+                <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
                    <Database className="w-16 h-16 text-primary" />
                 </div>
                 
                 <div className="flex items-center justify-between mb-8">
                    <div className="flex items-center gap-3">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(34,199,184,0.5)]"></div>
-                      <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-[0.3em] font-bold">Storage Pressure</span>
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_12px_rgba(34,199,184,0.6)]"></div>
+                      <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-black">Storage Pressure</span>
                    </div>
                    <span className="font-mono text-[10px] text-primary font-black uppercase tracking-widest">{percentUsed.toFixed(1)}%</span>
                 </div>
 
-                <div className="space-y-6">
-                   <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                <div className="space-y-6 text-left">
+                   <div className="h-2.5 w-full bg-muted/30 rounded-full overflow-hidden p-0.5 border border-divider">
                       <motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${percentUsed}%` }}
                         transition={{ duration: 1.5, ease: "easeOut" }}
-                        className="h-full bg-primary shadow-[0_0_15px_rgba(34,199,184,0.3)]"
+                        className="h-full bg-primary rounded-full shadow-[0_0_15px_rgba(34,199,184,0.4)]"
                       />
                    </div>
                    <div className="flex justify-between items-end">
-                      <div className="text-left">
-                         <p className="text-2xl font-black text-foreground font-mono leading-none mb-1">{usedMB}<span className="text-[10px] text-zinc-600 ml-1">MB</span></p>
-                         <p className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest font-bold">Protocol Volume</p>
+                      <div>
+                         <p className="text-3xl font-heading font-black text-foreground leading-none mb-1 tracking-tight">{usedMB}<span className="text-xs text-muted-foreground ml-1 uppercase font-mono font-bold">MB</span></p>
+                         <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest font-black">Protocol Capacity</p>
                       </div>
-                      <div className="text-right flex items-center gap-2">
-                         <Activity className="w-3.5 h-3.5 text-primary opacity-40" />
-                         <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest font-bold italic">Active Sync</span>
+                      <div className="flex items-center gap-3 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/10">
+                         <Activity className="w-4 h-4 text-primary animate-pulse" />
+                         <span className="text-[10px] font-mono text-primary uppercase tracking-widest font-black italic">Live Sync</span>
                       </div>
                    </div>
                 </div>
