@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { FeedCard } from "@/components/FeedCard";
 import { listBlobs, BlobMetadata, getStorageUsage } from "@/lib/shelby";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Database, HardDrive } from "lucide-react";
 
 const FILTERS = ["All", "Images", "Videos", "Courses", "Source Code", "Trending"];
 const STORAGE_LIMIT_MB = 500; // 500MB Free Limit
