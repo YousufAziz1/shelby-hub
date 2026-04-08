@@ -49,48 +49,26 @@
 }
 
 :root {
-  --background: 0 0% 4%;
+  --background: 0 0% 3%;
   --foreground: 0 0% 98%;
-  --card: 0 0% 7%;
+  --card: 0 0% 5%;
   --card-foreground: 0 0% 98%;
-  --popover: 0 0% 7%;
+  --popover: 0 0% 5%;
   --popover-foreground: 0 0% 98%;
   --primary: 326 100% 54%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 0 0% 12%;
+  --secondary: 0 0% 10%;
   --secondary-foreground: 0 0% 98%;
-  --muted: 0 0% 12%;
+  --muted: 0 0% 10%;
   --muted-foreground: 0 0% 63%;
   --accent: 326 100% 54%;
   --accent-foreground: 0 0% 100%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 14%;
-  --input: 0 0% 14%;
+  --border: 0 0% 12%;
+  --input: 0 0% 12%;
   --ring: 326 100% 54%;
   --radius: 1rem;
-}
-
-.light {
-  --background: 0 0% 100%;
-  --foreground: 0 0% 3.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 0 0% 3.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 3.9%;
-  --primary: 326 100% 54%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 0 0% 96.1%;
-  --secondary-foreground: 0 0% 9%;
-  --muted: 0 0% 96.1%;
-  --muted-foreground: 0 0% 45.1%;
-  --accent: 0 0% 96.1%;
-  --accent-foreground: 0 0% 9%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98.7%;
-  --border: 0 0% 89.8%;
-  --input: 0 0% 89.8%;
-  --ring: 326 100% 54%;
 }
 
 @layer base {
@@ -98,9 +76,26 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-black text-foreground min-h-screen;
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(326, 100%, 54%, 0.05) 0, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(220, 100%, 54%, 0.05) 0, transparent 50%);
   }
   html {
-    @apply font-sans;
+    @apply font-sans scroll-smooth;
+    background: #070707;
   }
+}
+
+@layer utilities {
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 8s linear infinite;
+  }
+}
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }

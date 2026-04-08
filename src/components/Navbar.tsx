@@ -36,9 +36,9 @@ export function Navbar() {
           </Link>
           <div className="hidden md:flex gap-10">
             <Link href="/" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Explorer</Link>
-            <Link href="/upload" className="text-sm font-bold text-zinc-400 hover:text-primary flex items-center gap-2 transition-all">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-              Mint Blob
+            <Link href="/upload" className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Mint Blob</Link>
+            <Link href="/dashboard" className="text-sm font-bold text-zinc-400 hover:text-primary transition-all flex items-center gap-2">
+              Dashboard
             </Link>
           </div>
         </div>

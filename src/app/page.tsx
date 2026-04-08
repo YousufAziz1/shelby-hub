@@ -56,39 +56,39 @@ export default function Home() {
             </span>
             Accelerated Protocol Node
           </div>
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white leading-[0.9]">
-            The Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500">Blobs.</span>
+          <h1 className="text-7xl md:text-9xl font-black tracking-tighter text-white leading-[0.85] drop-shadow-2xl">
+            The Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-indigo-500 animate-gradient">Blobs.</span>
           </h1>
-          <p className="text-xl md:text-2xl text-zinc-400 font-medium leading-relaxed max-w-2xl">
+          <p className="text-xl md:text-2xl text-zinc-300 font-medium leading-relaxed max-w-2xl opacity-90">
             Explore and mint premium assets on the world's most performant decentralized settlement layer.
           </p>
         </div>
 
         {/* Protocol Stats: Storage Card */}
-        <div className="w-full lg:w-[400px] bg-zinc-900/50 backdrop-blur-xl border border-white/5 rounded-[2.5rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-in fade-in slide-in-from-right-5 duration-700 delay-200 relative overflow-hidden group">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div className="w-full lg:w-[400px] bg-zinc-900/80 backdrop-blur-3xl border border-white/10 rounded-[3rem] p-10 shadow-[0_40px_80px_rgba(0,0,0,0.7)] animate-in fade-in slide-in-from-right-5 duration-700 delay-200 relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           <div className="relative z-10">
-            <div className="flex items-center justify-between mb-6">
-              <span className="text-xs font-black text-zinc-500 uppercase tracking-[0.2em]">Global Capacity</span>
-              <Badge className="bg-primary/20 text-primary border-none font-black text-[10px]">{percentUsed.toFixed(1)}%</Badge>
+            <div className="flex items-center justify-between mb-8">
+              <span className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em]">Protocol Capacity</span>
+              <Badge className="bg-primary text-white border-none font-black text-[10px] px-3 py-1 shadow-[0_0_15px_rgba(255,20,147,0.4)]">{percentUsed.toFixed(1)}%</Badge>
             </div>
             
-            <div className="space-y-4">
-              <div className="w-full h-3 bg-white/5 rounded-full overflow-hidden p-0.5 border border-white/5">
+            <div className="space-y-6">
+              <div className="w-full h-4 bg-white/5 rounded-full overflow-hidden p-1 border border-white/5">
                 <div 
-                  className="h-full bg-gradient-to-r from-primary to-purple-500 transition-all duration-1000 shadow-[0_0_15px_rgba(255,20,147,0.5)] rounded-full"
+                  className="h-full bg-gradient-to-r from-primary to-purple-500 transition-all duration-1000 shadow-[0_0_20px_rgba(255,20,147,0.6)] rounded-full"
                   style={{ width: `${percentUsed}%` }}
                 />
               </div>
               
-              <div className="flex justify-between items-end">
+              <div className="flex justify-between items-end pt-2">
                 <div>
-                  <p className="text-2xl font-black text-white">{usedMB}<span className="text-sm text-zinc-600 ml-1">MB</span></p>
-                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-1">Ingested Today</p>
+                  <p className="text-4xl font-black text-white leading-none">{usedMB}<span className="text-sm text-zinc-600 ml-2">MB</span></p>
+                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-2">Verified Data</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs font-bold text-primary uppercase tracking-widest">Active Sync</p>
-                  <p className="text-[10px] text-zinc-600 mt-1">Shelby Protocol v2</p>
+                  <p className="text-xs font-black text-primary uppercase tracking-[0.2em] animate-pulse">Live Sync</p>
+                  <p className="text-[10px] text-zinc-600 mt-1 font-bold">Shelby v2.4</p>
                 </div>
               </div>
             </div>
@@ -97,16 +97,16 @@ export default function Home() {
       </div>
 
       {/* Social Filters (YouTube Inspired) */}
-      <div className="flex items-center gap-4 mb-12 overflow-x-auto pb-6 scrollbar-hide snap-x">
+      <div className="flex items-center gap-4 mb-16 overflow-x-auto pb-6 scrollbar-hide snap-x">
         {FILTERS.map((f) => (
           <Button
             key={f}
             variant="ghost"
             onClick={() => setActiveFilter(f)}
-            className={`rounded-full px-8 h-12 text-sm font-black transition-all snap-start border-2 ${
+            className={`rounded-full px-10 h-14 text-sm font-black transition-all snap-start border-2 ${
               activeFilter === f 
-                ? "bg-primary border-primary text-white shadow-[0_0_20px_rgba(255,20,147,0.3)] scale-105" 
-                : "bg-white/5 border-transparent text-zinc-500 hover:text-white hover:bg-white/10"
+                ? "bg-primary border-primary text-white shadow-[0_0_30px_rgba(255,20,147,0.4)] scale-110 z-10" 
+                : "bg-zinc-900 border-white/5 text-zinc-400 hover:text-white hover:bg-zinc-800"
             }`}
           >
             {f}
