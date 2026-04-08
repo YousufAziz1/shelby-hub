@@ -176,45 +176,45 @@ export default function ContentPage() {
   const shortAddress = cAddress ? `${cAddress.slice(0, 6)}...${cAddress.slice(-4)}` : "0xUnknown";
 
   return (
-    <div className="container mx-auto px-4 py-16 max-w-6xl">
-      <div className="grid lg:grid-cols-3 gap-12">
+    <div className="container mx-auto px-6 py-16 max-w-6xl">
+      <div className="grid lg:grid-cols-3 gap-16">
         
         {/* Left Col - Media / Preview */}
-        <div className="lg:col-span-2 space-y-8">
-          <div className="aspect-video bg-[#F5F2EE] border border-border rounded-[2rem] overflow-hidden relative flex items-center justify-center shadow-2xl shadow-primary/5 group">
+        <div className="lg:col-span-2 space-y-10">
+          <div className="aspect-video bg-slate-50 border border-slate-200 rounded-[2rem] overflow-hidden relative flex items-center justify-center shadow-sm group">
              {isUnlocked ? (
                 thumb ? (
                   <img src={thumb} alt={blob?.title} className="object-contain w-full h-full" />
                 ) : (
-                  <div className="text-center text-muted-foreground">
-                    <PlayCircle className="w-16 h-16 mx-auto mb-4 opacity-30 text-primary" />
-                    <p className="font-extrabold text-xl tracking-tight text-foreground">Blob Verified</p>
-                    <p className="text-sm font-medium">Ready for local decryption/download.</p>
+                  <div className="text-center">
+                    <PlayCircle className="w-16 h-16 mx-auto mb-4 text-slate-200" />
+                    <p className="font-bold text-xl text-slate-900">Content Verified</p>
+                    <p className="text-sm text-slate-400 font-medium mt-1">Ready for protocol download.</p>
                   </div>
                 )
              ) : (
-                <div className="absolute inset-0 bg-[#FDFCFB]/80 backdrop-blur-xl flex flex-col items-center justify-center p-8 text-center">
-                  <div className="w-24 h-24 rounded-3xl bg-primary/10 flex items-center justify-center mb-8 shadow-inner">
-                    <Lock className="w-12 h-12 text-primary" />
+                <div className="absolute inset-0 bg-white/60 backdrop-blur-xl flex flex-col items-center justify-center p-8 text-center">
+                  <div className="w-20 h-20 rounded-3xl bg-slate-900 flex items-center justify-center mb-8 shadow-2xl">
+                    <Lock className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-3xl font-black mb-3 tracking-tighter">Premium Settlement</h3>
-                  <p className="text-muted-foreground max-w-sm mb-10 font-medium leading-relaxed">
-                    This {(cType || 'content').toLowerCase()} requires SUSD settlement for node access.
+                  <h3 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">Settlement Required</h3>
+                  <p className="text-slate-500 max-w-sm mb-10 font-medium leading-relaxed">
+                    Access to this {(cType || 'content').toLowerCase()} requires decentralized ingestion settlement.
                   </p>
                   <Button 
                     size="lg" 
                     onClick={handlePayment} 
                     disabled={isPaying || !connected}
-                    className="h-16 px-10 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/30 transition-all active:scale-95"
+                    className="h-14 px-10 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold transition-all active:scale-95"
                   >
                     {isPaying ? (
-                      <><Loader2 className="w-5 h-5 mr-3 animate-spin" /> Settlement in progress...</>
+                      <><Loader2 className="w-5 h-5 mr-3 animate-spin" /> Processing...</>
                     ) : (
-                      <>Unlock for {blob.price} SUSD</>
+                      <>Settle {blob.price} SUSD</>
                     )}
                   </Button>
                   {!connected && (
-                    <p className="text-[10px] text-primary mt-5 font-black uppercase tracking-widest">Auth session required</p>
+                    <p className="text-[10px] text-slate-400 mt-5 font-bold uppercase tracking-wider">Authentication Required</p>
                   )}
                 </div>
              )}
@@ -222,101 +222,99 @@ export default function ContentPage() {
 
           <div className="flex flex-col sm:flex-row gap-4">
             <Button 
-                variant="secondary" 
-                className="flex-1 h-14 rounded-2xl font-bold bg-white border-border border shadow-sm hover:border-primary/30 hover:text-primary transition-all" 
+                variant="outline" 
+                className="flex-1 h-12 rounded-xl font-bold border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all" 
                 onClick={handleDownload} 
                 disabled={!isUnlocked}
             >
-              <Download className="w-5 h-5 mr-2" /> Download Payload
+              <Download className="w-4 h-4 mr-2" /> Download Asset
             </Button>
             {cType === 'Video' && isUnlocked && (
-              <Button className="flex-1 h-14 rounded-2xl bg-primary text-white font-bold shadow-lg shadow-primary/20">
-                <PlayCircle className="w-5 h-5 mr-2" /> Stream via ShelbyNet
+              <Button className="flex-1 h-12 rounded-xl bg-slate-900 text-white font-bold">
+                <PlayCircle className="w-4 h-4 mr-2" /> Play Stream
               </Button>
             )}
           </div>
         </div>
 
         {/* Right Col - Meta & Brand */}
-        <div className="space-y-8">
+        <div className="space-y-10">
           <div className="space-y-4">
-             <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/10 font-black uppercase tracking-widest text-[10px] py-1">Verified Blob</Badge>
-             <h1 className="text-4xl font-black tracking-tighter text-foreground leading-[1.1]">{blob.title}</h1>
+             <Badge className="bg-slate-100 text-slate-600 border-none hover:bg-slate-100 font-bold uppercase tracking-wider text-[10px] py-1 px-3">Protocol Verified</Badge>
+             <h1 className="text-4xl font-bold tracking-tight text-slate-900 leading-[1.2]">{blob.title}</h1>
           </div>
           
-          <div className="flex items-center justify-between bg-white p-5 rounded-2xl border border-border shadow-sm">
+          <div className="flex items-center justify-between bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
              <div className="flex items-center gap-4">
-               <div className="w-12 h-12 rounded-xl bg-primary flex justify-center items-center font-black text-white shadow-lg text-xs">
+               <div className="w-10 h-10 rounded-lg bg-slate-100 flex justify-center items-center font-bold text-slate-600 shadow-inner text-xs">
                  {cAddress ? cAddress.slice(2, 4).toUpperCase() : "??"}
                </div>
                <div>
-                  <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest leading-none mb-1">Creator</p>
-                  <p className="font-bold text-foreground truncate w-24 sm:w-auto">{shortAddress}</p>
-                  <p className="text-[10px] text-primary font-black uppercase tracking-tighter mt-0.5">{followers} Followers</p>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider leading-none mb-1.5">Creator</p>
+                  <p className="font-bold text-slate-900 truncate w-24 sm:w-auto text-sm">{shortAddress}</p>
                </div>
              </div>
              <Button 
                 variant={isFollowing ? "secondary" : "outline"} 
                 size="sm" 
-                className={`rounded-xl font-bold px-5 h-10 transition-all ${isFollowing ? "bg-muted text-muted-foreground" : "border-primary/20 text-primary hover:bg-primary/5"}`}
+                className={`rounded-lg font-bold h-9 px-4 text-xs transition-all ${isFollowing ? "bg-slate-100 text-slate-500 border-none" : "border-slate-200 text-slate-600 hover:bg-slate-50"}`}
                 onClick={handleFollow}
                 disabled={isFollowing}
              >
-                {isFollowing ? <><UserCheck className="w-4 h-4 mr-1.5" /> Followed</> : "Follow"}
+                {isFollowing ? "Following" : "Follow"}
              </Button>
           </div>
 
-          <Card className="bg-white border border-border rounded-2xl shadow-sm overflow-hidden">
-             <CardHeader className="bg-[#FDFCFB] border-b py-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Blob Manifest</p>
+          <Card className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+             <CardHeader className="bg-slate-50/50 border-b border-slate-100 p-5">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Asset Manifest</p>
              </CardHeader>
              <CardContent className="p-6 space-y-6">
                 <div>
-                   <p className="text-sm text-foreground leading-relaxed font-medium italic opacity-80">
-                      "{blob.description || "No metadata provided for this ingestion cycle."}"
+                   <p className="text-sm text-slate-600 leading-relaxed font-medium">
+                      {blob.description}
                    </p>
                 </div>
 
-                <div className="space-y-4 border-t pt-6">
-                  <div className="flex justify-between text-xs font-bold uppercase tracking-widest">
-                    <span className="text-muted-foreground/60">Node Settlement</span>
-                    <span className="text-primary">{blob.price === 0 ? "Open Access" : `${blob.price} SUSD`}</span>
+                <div className="space-y-4 pt-6 border-t border-slate-100">
+                  <div className="flex justify-between text-[11px] font-bold uppercase tracking-wider">
+                    <span className="text-slate-400">Settlement</span>
+                    <span className="text-slate-900">{blob.price === 0 ? "Open Access" : `${blob.price} SUSD`}</span>
                   </div>
-                  <div className="flex justify-between text-xs font-bold uppercase tracking-widest">
-                    <span className="text-muted-foreground/60">Ingestion Date</span>
-                    <span className="text-foreground">{new Date(blob.timestamp).toLocaleDateString()}</span>
+                  <div className="flex justify-between text-[11px] font-bold uppercase tracking-wider">
+                    <span className="text-slate-400">Type</span>
+                    <span className="text-slate-900">{cType}</span>
                   </div>
-                  <div className="flex justify-between text-xs font-bold uppercase tracking-widest">
-                    <span className="text-muted-foreground/60">Class</span>
-                    <span className="text-primary">{cType}</span>
+                  <div className="flex justify-between text-[11px] font-bold uppercase tracking-wider">
+                    <span className="text-slate-400">Published</span>
+                    <span className="text-slate-900">{new Date(blob.timestamp).toLocaleDateString()}</span>
                   </div>
                 </div>
              </CardContent>
           </Card>
 
           <div className="flex justify-between items-center py-4 px-2">
-            <div className="flex gap-6">
+            <div className="flex gap-8">
               <button 
                  onClick={handleLike}
-                 className="flex items-center gap-2 font-black text-[11px] uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors"
+                 className="flex items-center gap-2 font-bold text-xs text-slate-400 hover:text-red-500 transition-colors"
               >
-                <Heart className={`w-5 h-5 ${blob.likes > 0 ? "fill-primary text-primary" : "text-primary/40"}`} /> {blob.likes}
+                <Heart className={`w-4 h-4 ${blob.likes > 0 ? "fill-red-500 text-red-500" : ""}`} /> {blob.likes}
               </button>
-              <div className="flex items-center gap-2 font-black text-[11px] uppercase tracking-wider text-muted-foreground">
-                <Eye className="w-5 h-5 text-primary/40" /> {blob.views}
+              <div className="flex items-center gap-2 font-bold text-xs text-slate-400">
+                <Eye className="w-4 h-4" /> {blob.views}
               </div>
             </div>
             <button 
                onClick={handleShare}
-               className="flex items-center gap-2 font-black text-[11px] uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors"
+               className="flex items-center gap-2 font-bold text-xs text-slate-400 hover:text-slate-900 transition-colors"
             >
-              <Share2 className="w-5 h-5 text-primary/40" /> Share
+              <Share2 className="w-4 h-4" /> Share
             </button>
           </div>
 
-          <div className="pt-6 border-t text-center">
-             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">Ingested by</p>
-             <p className="text-xs font-bold text-foreground">Build by <span className="text-primary">@Aptos_king</span></p>
+          <div className="pt-8 border-t border-slate-100 text-center">
+             <p className="text-xs font-bold text-slate-900">Build by <span className="text-primary font-black">@Aptos_king</span></p>
           </div>
         </div>
       </div>
