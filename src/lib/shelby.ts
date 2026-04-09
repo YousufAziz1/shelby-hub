@@ -104,12 +104,36 @@ export const recordView = async (id: string) => {
 };
 
 export const recordLike = async (id: string) => {
-  console.log("Recording like for", id);
   const { error } = await supabase.rpc('increment_likes', { blob_id: id });
   if (error) {
     console.error("Like increment error", error);
     throw error;
   }
+};
+
+export const recordUnlike = async (id: string) => {
+  const { error } = await supabase.rpc('decrement_likes', { blob_id: id });
+  if (error) {
+    // Fallback: manual decrement
+    const { data } = await supabase.from('blobs').select('likes').eq('id', id).single();
+    if (data) {
+      await supabase.from('blobs').update({ likes: Math.max(0, (data.likes || 1) - 1) }).eq('id', id);
+    }
+  }
+};
+
+// Per-user like state stored in localStorage (wallet address + blob id)
+export const checkUserLiked = (walletAddress: string, blobId: string): boolean => {
+  if (typeof window === 'undefined') return false;
+  const key = `liked_${walletAddress}_${blobId}`;
+  return localStorage.getItem(key) === '1';
+};
+
+export const setUserLiked = (walletAddress: string, blobId: string, liked: boolean) => {
+  if (typeof window === 'undefined') return;
+  const key = `liked_${walletAddress}_${blobId}`;
+  if (liked) localStorage.setItem(key, '1');
+  else localStorage.removeItem(key);
 };
 
 export const followUser = async (follower: string, following: string) => {
@@ -142,4 +166,61 @@ export const getFollowCount = async (address: string) => {
     
   if (error) return 0;
   return count || 0;
+};
+
+export const unfollowUser = async (follower: string, following: string) => {
+  const { error } = await supabase
+    .from('follows')
+    .delete()
+    .eq('follower_address', follower)
+    .eq('following_address', following);
+    
+  if (error) {
+    console.error("Unfollow error", error);
+    throw error;
+  }
+};
+
+export const deleteBlob = async (id: string, creator: string) => {
+  // 1. Get file metadata to find storage path
+  const { data: blob, error: fetchError } = await supabase
+    .from('blobs')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (fetchError || !blob) throw new Error("Asset not found in database");
+
+  // 2. Delete from Storage (best-effort — won't fail if file already gone)
+  const fileUrl: string = blob.fileUrl || blob.fileurl || "";
+  const fileName = fileUrl.split('/').pop();
+  if (fileName) {
+    await supabase.storage.from(BUCKET_NAME).remove([fileName]);
+  }
+
+  // 3. Delete DB record by ID
+  const { data: deleteData, error: dbError } = await supabase
+    .from('blobs')
+    .delete()
+    .eq('id', id)
+    .select();
+
+  if (dbError) throw new Error("Database delete failed: " + dbError.message);
+  if (!deleteData || deleteData.length === 0) {
+    throw new Error("Action blocked by Supabase RLS. Please disable RLS or add a complete DELETE policy in your Supabase Dashboard.");
+  }
+};
+
+export const updateBlob = async (id: string, creator: string, updates: Partial<BlobMetadata>) => {
+  const { data: updateData, error } = await supabase
+    .from('blobs')
+    .update(updates)
+    .eq('id', id)
+    .eq('creatorAddress', creator)
+    .select();
+
+  if (error) throw error;
+  if (!updateData || updateData.length === 0) {
+    throw new Error("Action blocked by Supabase RLS. Please disable RLS or add a complete UPDATE policy in your Supabase Dashboard.");
+  }
 };

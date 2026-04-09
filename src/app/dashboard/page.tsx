@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { UploadCloud, Activity, DollarSign, Eye, Lock, Globe, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { FeedCard } from "@/components/FeedCard";
+import { MatrixText } from "@/components/ui/matrix-text";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -54,10 +55,12 @@ export default function DashboardPage() {
           </div>
           
           <div className="p-6 rounded-2xl bg-surface border border-border inline-flex items-center gap-5 text-left shadow-lg">
-             <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-background font-black font-heading shadow-lg shadow-primary/10">S</div>
+             <div className="w-12 h-12 rounded-xl border border-divider flex items-center justify-center shadow-lg shadow-primary/10 overflow-hidden bg-surface">
+                <img src="/logo.png" alt="Shelby Logo" className="w-full h-full object-cover" />
+             </div>
              <div>
                 <p className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-zinc-500 leading-none mb-1.5">Verification Node</p>
-                <p className="text-sm font-bold text-foreground">Aptos Mainnet <span className="text-primary italic">@Protocol_Lead</span></p>
+                <p className="text-sm font-bold text-foreground">Shelby Testnet <span className="text-primary italic">@Aptos_king</span></p>
              </div>
           </div>
         </motion.div>
@@ -66,7 +69,7 @@ export default function DashboardPage() {
   }
 
   const totalViews = myBlobs.reduce((acc, current) => acc + current.views, 0);
-  const estimatedEarnings = myBlobs.reduce((acc, current) => acc + (current.price * 5), 0);
+  const estimatedEarnings = myBlobs.reduce((acc, current) => acc + current.price, 0);
 
   return (
     <div className="container mx-auto px-6 py-32 max-w-[1200px] bg-grid min-h-screen">
@@ -76,12 +79,18 @@ export default function DashboardPage() {
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 mb-24"
       >
-         <div className="space-y-6">
-            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-primary/10 border border-primary/20 text-primary font-mono text-[10px] uppercase tracking-[0.3em] font-bold">
+         <div className="space-y-4 relative group">
+            {/* Subtle glow behind title */}
+            <div className="absolute -inset-10 bg-primary/5 blur-[80px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+            
+            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-primary/10 border border-primary/20 text-primary font-mono text-[10px] uppercase tracking-[0.3em] font-bold relative z-10">
               Protocol State: <span className="flex items-center gap-2 ml-1"><div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div> ACTIVE_NODE</span>
             </div>
-            <h1 className="text-6xl md:text-8xl font-heading font-black tracking-tighter text-foreground leading-none uppercase">Console.</h1>
-            <p className="text-muted-foreground text-xl leading-relaxed max-w-2xl font-medium">Advanced node telemetry. Real-time monitoring of secure ingestion streams and cumulative revenue settlements.</p>
+            
+            <h1 className="text-6xl md:text-8xl font-heading font-black tracking-tighter text-foreground leading-none uppercase relative z-10">
+               <MatrixText text="Dashboard." className="font-heading tracking-tighter" />
+            </h1>
+            <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl font-medium relative z-10">Real-time protocol telemetry. Monitoring ingestion streams, network reach, and settlement performance.</p>
          </div>
          <Link href="/upload">
            <Button className="h-16 px-12 rounded-xl bg-primary text-background font-black uppercase tracking-widest text-[11px] hover:scale-[1.02] transition-all shadow-xl shadow-primary/10 flex items-center">
@@ -157,7 +166,9 @@ export default function DashboardPage() {
          <p className="text-[10px] font-mono uppercase tracking-[0.4em] text-zinc-600 mb-10 font-bold">Protocol Verification Authority</p>
          <div className="inline-flex items-center gap-6 p-6 rounded-[2.5rem] bg-surface border border-divider shadow-2xl relative group">
             <div className="absolute inset-0 bg-primary/5 rounded-[2.5rem] opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center text-background font-black font-heading text-lg shadow-lg shadow-primary/10">S</div>
+            <div className="w-14 h-14 border border-divider rounded-2xl flex items-center justify-center shadow-lg shadow-primary/10 overflow-hidden bg-surface">
+               <img src="/logo.png" alt="Admin" className="w-full h-full object-cover" />
+            </div>
             <div className="text-left relative z-10">
                <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest leading-none mb-2 font-bold">Master Node Operator</p>
                <p className="text-lg font-heading font-black text-foreground uppercase tracking-tight">Verified Protocol <span className="text-primary">Admin</span></p>

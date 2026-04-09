@@ -3,11 +3,15 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FeedCard } from "@/components/FeedCard";
+import { DottedSurface } from "@/components/ui/dotted-surface";
+import AnimatedTextCycle from "@/components/ui/animated-text-cycle";
+import { Tabs } from "@/components/ui/vercel-tabs";
+import { cn } from "@/lib/utils";
 import { listBlobs, BlobMetadata, getStorageUsage } from "@/lib/shelby";
 import { Button } from "@/components/ui/button";
 import { Search, ArrowRight, Loader2, Sparkles, LayoutGrid, Database, Activity } from "lucide-react";
 
-const FILTERS = ["All", "Images", "Videos", "Courses", "Source Code", "Trending"];
+const FILTERS = ["All", "Images", "Videos", "PDFs", "Source Code", "Trending"];
 const STORAGE_LIMIT_MB = 500;
 
 const fadeInUp = {
@@ -49,22 +53,41 @@ export default function Home() {
     if (activeFilter === "Trending") return true; 
     if (activeFilter === "Images") return blob.contentType === "Image";
     if (activeFilter === "Videos") return blob.contentType === "Video";
+    if (activeFilter === "PDFs") return blob.contentType === "PDF" || blob.contentType === "Course";
     return blob.contentType === activeFilter;
   });
 
   return (
-    <div className="relative min-h-screen bg-grid">
+    <div className="relative min-h-screen bg-grid overflow-hidden">
       {/* High-Impact Centered Hero */}
-      <section className="container mx-auto px-6 pt-32 pb-16 text-center max-w-[1200px]">
-        <motion.div {...fadeInUp} className="space-y-10">
+      <section className="relative w-full pt-32 pb-16 min-h-[80vh] flex flex-col items-center justify-center">
+        
+        {/* 3D Dotted Surface Background */}
+        <DottedSurface className="absolute inset-0 z-0 h-full w-full opacity-60" />
+
+        {/* Ambient Glow similar to DemoOne */}
+        <div
+          aria-hidden="true"
+          className={cn(
+            'pointer-events-none absolute -top-20 left-1/2 h-full w-[150%] -translate-x-1/2 rounded-full',
+            'bg-[radial-gradient(ellipse_at_center,hsla(var(--primary)/0.15),transparent_60%)]',
+            'blur-[60px] z-0'
+          )}
+        />
+
+        <div className="container relative z-10 mx-auto px-6 text-center max-w-[1200px]">
+          <motion.div {...fadeInUp} className="space-y-10">
           <div className="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-primary/10 border border-primary/20 text-primary font-mono text-[10px] uppercase tracking-[0.4em] font-bold mx-auto shadow-2xl shadow-primary/5">
-             <Sparkles className="w-3.5 h-3.5" /> Powered by Shelby Protocol Testnet 🚀
+             Powered by Shelby Protocol Testnet
           </div>
           
-          <h1 className="text-6xl md:text-9xl font-heading font-black tracking-tighter text-foreground leading-[0.85] uppercase">
-            Discover. <br />
-            Create. <span className="text-primary italic">Own.</span>
-          </h1>
+          <div className="flex justify-center my-16 relative z-20">
+             <AnimatedTextCycle 
+               words={["DISCOVER.", "CREATE.", "OWN.", "SHELBY."]} 
+               interval={3000}
+               className="text-6xl md:text-[8rem] font-heading font-black tracking-tighter text-foreground px-2"
+             />
+          </div>
           
           <p className="text-muted-foreground text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto font-medium">
             The ultimate decentralized content marketplace. Upload your premium files, set 
@@ -73,8 +96,8 @@ export default function Home() {
 
           <div className="max-w-md mx-auto pt-10">
              <div className="bg-surface/40 backdrop-blur-xl border border-divider rounded-[2rem] p-8 shadow-2xl relative overflow-hidden group transition-colors duration-500">
-                <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                   <Database className="w-16 h-16 text-primary" />
+                <div className="absolute -bottom-6 -right-6 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                   <Database className="w-32 h-32 text-primary" />
                 </div>
                 
                 <div className="flex items-center justify-between mb-8">
@@ -107,33 +130,20 @@ export default function Home() {
                 </div>
              </div>
           </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </section>
 
       {/* Discovery Feed Section */}
       <section className="container mx-auto px-6 pb-40 max-w-[1200px]">
-        {/* Simplified Filters */}
-        <div className="flex flex-wrap items-center justify-center gap-3 mb-16">
-          {FILTERS.map((f, i) => (
-            <motion.div 
-               key={f} 
-               initial={{ opacity: 0, scale: 0.9 }} 
-               animate={{ opacity: 1, scale: 1 }} 
-               transition={{ delay: 0.1 + i * 0.05 }}
-            >
-              <Button
-                variant="ghost"
-                onClick={() => setActiveFilter(f)}
-                className={`h-11 px-8 rounded-full text-[10px] font-mono font-black uppercase tracking-[0.2em] transition-all border ${
-                  activeFilter === f 
-                    ? "bg-primary border-primary text-background shadow-lg shadow-primary/20 pointer-events-none" 
-                    : "bg-surface border-border text-zinc-500 hover:text-foreground hover:border-zinc-400"
-                }`}
-              >
-                {f}
-              </Button>
-            </motion.div>
-          ))}
+        
+        {/* Sleek Animated Tabs Filter */}
+        <div className="flex justify-center mb-16">
+           <Tabs 
+             tabs={FILTERS.map(f => ({ id: f, label: f }))}
+             activeTab={activeFilter}
+             onTabChange={(id) => setActiveFilter(id)}
+           />
         </div>
 
         {/* Dynamic Content Grid */}
@@ -171,10 +181,10 @@ export default function Home() {
       <footer className="container mx-auto px-6 py-20 border-t border-divider max-w-[1200px]">
         <div className="flex flex-col md:flex-row justify-between items-center gap-10">
            <div className="flex items-center gap-4">
-              <div className="w-9 h-9 bg-primary flex items-center justify-center rounded-xl shadow-lg shadow-primary/10">
-                 <span className="font-heading font-black text-background text-sm">S</span>
+              <div className="w-9 h-9 flex items-center justify-center rounded-xl shadow-lg shadow-primary/10 overflow-hidden border border-primary/20 bg-surface">
+                 <img src="/logo.png" alt="Shelby Logo" className="w-full h-full object-cover" />
               </div>
-              <span className="text-xl font-heading font-black uppercase tracking-tight text-foreground">ShelbyHub</span>
+              <span className="text-xl font-heading font-black tracking-tight text-foreground">ShelbyHub</span>
            </div>
            
            <div className="text-[10px] font-mono text-zinc-600 uppercase tracking-[0.4em] font-bold">
@@ -182,8 +192,7 @@ export default function Home() {
            </div>
 
            <div className="flex items-center gap-8">
-              <a href="#" className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest font-bold hover:text-primary transition-colors">GitHub</a>
-              <a href="#" className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest font-bold hover:text-primary transition-colors">Status</a>
+              <a href="https://github.com/YousufAziz1/" target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest font-bold hover:text-primary transition-colors">GitHub</a>
            </div>
         </div>
       </footer>
