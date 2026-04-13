@@ -56,11 +56,10 @@ export function Navbar() {
     <nav className="border-b border-divider bg-background/80 backdrop-blur-md sticky top-0 z-50">
       <div className="container mx-auto px-6 h-[72px] flex items-center justify-between">
         <div className="flex items-center gap-12">
-          <Link href="/" className="font-heading text-2xl tracking-tighter text-foreground flex items-center gap-3 group">
-            <div className="w-10 h-10 border border-primary/20 bg-surface rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(34,199,184,0.1)] group-hover:bg-primary/5 transition-all duration-300 overflow-hidden">
-              <img src="/logo.png" alt="Shelby Logo" className="w-full h-full object-cover" />
+          <Link href="/" className="flex items-center group">
+            <div className="h-14 w-52 flex items-center justify-center overflow-hidden group-hover:opacity-90 transition-all duration-300">
+              <img src="/logo.jpg" alt="ShelbyMarket" className="w-full h-full object-contain" />
             </div>
-            <span className="font-black tracking-tight group-hover:translate-x-0.5 transition-transform duration-300">Shelby<span className="text-primary italic">Hub</span></span>
           </Link>
           <div className="hidden md:flex gap-10">
             <Link href="/" className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors">Explore</Link>

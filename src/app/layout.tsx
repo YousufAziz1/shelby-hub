@@ -22,7 +22,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ShelbyHub | Institutional Protocol",
+  title: "ShelbyMarket | Institutional Protocol",
   description: "Enterprise-grade digital asset settlement and high-throughput ingestion platform.",
 };
 

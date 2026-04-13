@@ -6,7 +6,7 @@ import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { listBlobs, BlobMetadata, getFollowCount } from "@/lib/shelby";
 import { FeedCard } from "@/components/FeedCard";
 import { Button } from "@/components/ui/button";
-import { Loader2, UploadCloud, Users, Eye, Heart, Copy, Check, ExternalLink, Wallet } from "lucide-react";
+import { Loader2, UploadCloud, Users, Eye, Heart, Copy, Check, ExternalLink, Wallet, Coins } from "lucide-react";
 import Link from "next/link";
 
 export default function ProfilePage() {
@@ -17,6 +17,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [followers, setFollowers] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [activeSeries, setActiveSeries] = useState("All");
 
   const isOwner = connected && account?.address?.toString().toLowerCase() === address?.toLowerCase();
 
@@ -45,6 +46,10 @@ export default function ProfilePage() {
 
   const totalViews = blobs.reduce((s, b) => s + (b.views || 0), 0);
   const totalLikes = blobs.reduce((s, b) => s + (b.likes || 0), 0);
+  const totalEarnings = (totalLikes * 0.04).toFixed(2);
+
+  const seriesOptions = ["All", ...Array.from(new Set(blobs.map(b => b.contentType)))];
+  const filteredBlobs = blobs.filter(b => activeSeries === "All" || b.contentType === activeSeries);
 
   const shortAddr = address
     ? `${address.slice(0, 6)}...${address.slice(-4)}`
@@ -129,12 +134,13 @@ export default function ProfilePage() {
         </div>
 
         {/* ── Stats Row ─────────────────────────────────────────────── */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-16">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-16">
           {[
             { icon: UploadCloud, label: "Uploads",   value: blobs.length },
             { icon: Users,       label: "Followers",  value: followers },
             { icon: Eye,         label: "Total Views", value: totalViews },
             { icon: Heart,       label: "Total Likes", value: totalLikes },
+            { icon: Coins,       label: "SUSD Earned", value: totalEarnings },
           ].map(({ icon: Icon, label, value }) => (
             <div
               key={label}
@@ -155,7 +161,6 @@ export default function ProfilePage() {
           ))}
         </div>
 
-        {/* ── Content Grid ──────────────────────────────────────────── */}
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-heading font-black uppercase tracking-tight text-foreground">
@@ -165,6 +170,17 @@ export default function ProfilePage() {
               {blobs.length} asset{blobs.length !== 1 ? "s" : ""} on ShelbyNet
             </p>
           </div>
+          {blobs.length > 0 && (
+            <select 
+              className="px-4 py-2 rounded-xl bg-surface border border-divider text-[10px] font-mono font-black uppercase text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50"
+              value={activeSeries}
+              onChange={(e) => setActiveSeries(e.target.value)}
+            >
+              {seriesOptions.map(series => (
+                <option key={series} value={series}>{series}</option>
+              ))}
+            </select>
+          )}
         </div>
 
         {loading ? (
@@ -199,7 +215,7 @@ export default function ProfilePage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {blobs.map((b) => (
+            {filteredBlobs.map((b) => (
               <FeedCard key={b.id} blob={b} />
             ))}
           </div>

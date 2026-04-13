@@ -25,6 +25,14 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("All");
   const [usedBytes, setUsedBytes] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const q = new URLSearchParams(window.location.search).get("q");
+      if (q) setSearchQuery(q.toLowerCase());
+    }
+  }, []);
 
   useEffect(() => {
     async function loadData() {
@@ -49,6 +57,12 @@ export default function Home() {
   const percentUsed = Math.min((parseFloat(usedMB) / STORAGE_LIMIT_MB) * 100, 100);
 
   const filteredBlobs = blobs.filter((blob) => {
+    const matchesSearch = searchQuery 
+      ? blob.title.toLowerCase().includes(searchQuery) || (blob.creatorAddress || "").toLowerCase().includes(searchQuery)
+      : true;
+      
+    if (!matchesSearch) return false;
+
     if (activeFilter === "All") return true;
     if (activeFilter === "Trending") return true; 
     if (activeFilter === "Images") return blob.contentType === "Image";
@@ -137,13 +151,28 @@ export default function Home() {
       {/* Discovery Feed Section */}
       <section className="container mx-auto px-6 pb-40 max-w-[1200px]">
         
-        {/* Sleek Animated Tabs Filter */}
-        <div className="flex justify-center mb-16">
-           <Tabs 
-             tabs={FILTERS.map(f => ({ id: f, label: f }))}
-             activeTab={activeFilter}
-             onTabChange={(id) => setActiveFilter(id)}
-           />
+        {/* Sleek Animated Tabs Filter & Search */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-16 w-full relative z-10">
+           <div className="flex-1" />
+           <div className="flex justify-center">
+              <Tabs 
+                tabs={FILTERS.map(f => ({ id: f, label: f }))}
+                activeTab={activeFilter}
+                onTabChange={(id) => setActiveFilter(id)}
+              />
+           </div>
+           
+           <div className="flex-1 flex justify-end">
+              <div className="relative group/search flex items-center">
+                  <Search className="w-4 h-4 absolute left-4 text-muted-foreground group-focus-within/search:text-primary transition-colors" />
+                  <input 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search files or address..." 
+                    className="pl-11 pr-4 py-3 rounded-2xl bg-surface border border-divider text-xs font-mono font-bold text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all w-64 focus:w-80 shadow-sm hover:shadow-md"
+                  />
+              </div>
+           </div>
         </div>
 
         {/* Dynamic Content Grid */}
@@ -181,14 +210,13 @@ export default function Home() {
       <footer className="container mx-auto px-6 py-20 border-t border-divider max-w-[1200px]">
         <div className="flex flex-col md:flex-row justify-between items-center gap-10">
            <div className="flex items-center gap-4">
-              <div className="w-9 h-9 flex items-center justify-center rounded-xl shadow-lg shadow-primary/10 overflow-hidden border border-primary/20 bg-surface">
-                 <img src="/logo.png" alt="Shelby Logo" className="w-full h-full object-cover" />
+              <div className="w-12 h-12 flex items-center justify-center rounded-xl shadow-lg shadow-primary/10 overflow-hidden border border-primary/20 bg-surface">
+                 <img src="/logo.jpg" alt="ShelbyMarket" className="w-full h-full object-cover" />
               </div>
-              <span className="text-xl font-heading font-black tracking-tight text-foreground">ShelbyHub</span>
            </div>
            
            <div className="text-[10px] font-mono text-zinc-600 uppercase tracking-[0.4em] font-bold">
-              Institutional Protocol | 2026 ShelbyHub
+              Institutional Protocol | 2026 ShelbyMarket
            </div>
 
            <div className="flex items-center gap-8">

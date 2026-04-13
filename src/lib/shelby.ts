@@ -61,7 +61,15 @@ export const uploadBlob = async (payload: { data: ArrayBuffer | File, mimeType: 
   return blobData;
 };
 
-export const listBlobs = async (params: { limit?: number, filter?: any } = {}) => {
+let blobsCache: { data: BlobMetadata[], timestamp: number } | null = null;
+const CACHE_TTL = 30000; // 30 sec cache
+
+export const listBlobs = async (params: { limit?: number, filter?: any } = {}, forceRefresh = false) => {
+  const isGlobalFeed = !params.limit && !params.filter;
+  if (isGlobalFeed && !forceRefresh && blobsCache && Date.now() - blobsCache.timestamp < CACHE_TTL) {
+    return blobsCache.data;
+  }
+
   let query = supabase
     .from('blobs')
     .select('*')
@@ -72,6 +80,10 @@ export const listBlobs = async (params: { limit?: number, filter?: any } = {}) =
 
   const { data, error } = await query;
   if (error) throw error;
+  
+  if (isGlobalFeed) {
+    blobsCache = { data: data as BlobMetadata[], timestamp: Date.now() };
+  }
   
   return data as BlobMetadata[];
 };

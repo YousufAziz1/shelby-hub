@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { UploadCloud, File as FileIcon, X, Loader2, CheckCircle2, ArrowLeft, Wallet, ShieldCheck, Zap, Server, Globe, FileText, Video, Image as ImageIcon, Code } from "lucide-react";
+import { UploadCloud, File as FileIcon, X, Loader2, CheckCircle2, ArrowLeft, Wallet, ShieldCheck, Zap, Server, Globe, FileText, Video, Image as ImageIcon, Code, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { Network } from "@aptos-labs/ts-sdk";
 import { ShelbyClient, ShelbyBlobClient, type ShelbyNetwork, generateCommitments, createDefaultErasureCodingProvider, expectedTotalChunksets } from "@shelby-protocol/sdk/browser";
@@ -41,6 +41,34 @@ export default function UploadPage() {
   const [loading, setLoading] = useState(false);
   const [successId, setSuccessId] = useState("");
   const [error, setError] = useState("");
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+
+  const handleAIGenerate = async () => {
+    if (!title) {
+       setError("Enter an Asset Identity first for AI context!");
+       return;
+    }
+    setIsGeneratingAI(true);
+    await new Promise(r => setTimeout(r, 1500));
+    const mockResponses = [
+       `A comprehensive deep-dive into ${title} architecture and on-chain implications. Tailored for enterprise environments.`,
+       `High-fidelity ${contentType.toLowerCase()} asset: ${title}. Fully optimized for decentralized viewing and IPfs persistence.`,
+       `Exclusive premium content: ${title}. This payload contains proprietary methodologies reserved for protocol stakeholders.`
+    ];
+    setDescription(mockResponses[Math.floor(Math.random() * mockResponses.length)]);
+    setIsGeneratingAI(false);
+  };
+
+  const getProgress = () => {
+    switch(step) {
+      case 'ENCODING': return { pct: 25, label: "Encoding locally...", est: "0:05" };
+      case 'SIGNING': return { pct: 50, label: "Awaiting signature...", est: "0:02" };
+      case 'REGISTERING': return { pct: 75, label: "Registering on-chain...", est: "0:08" };
+      case 'UPLOADING': return { pct: 90, label: "Syncing to nodes...", est: "0:03" };
+      case 'SUCCESS': return { pct: 100, label: "Settled.", est: "0:00" };
+      default: return { pct: 0, label: "", est: "" };
+    }
+  };
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
@@ -241,7 +269,18 @@ export default function UploadPage() {
                        />
                     </div>
                     <div className="space-y-3">
-                       <Label className="text-[10px] font-mono font-black uppercase tracking-[0.4em] text-zinc-500 ml-1">PROTOCOL METADATA (MANIFEST)</Label>
+                       <div className="flex items-center justify-between">
+                          <Label className="text-[10px] font-mono font-black uppercase tracking-[0.4em] text-zinc-500 ml-1">PROTOCOL METADATA (MANIFEST)</Label>
+                          <button 
+                             type="button" 
+                             onClick={handleAIGenerate} 
+                             disabled={isGeneratingAI}
+                             className="text-[9px] font-mono font-black text-primary uppercase tracking-widest flex items-center gap-1 hover:text-primary/70 transition-colors"
+                          >
+                             {isGeneratingAI ? <Loader2 className="w-3 h-3 animate-spin"/> : <Sparkles className="w-3 h-3"/>}
+                             Auto Formulate
+                          </button>
+                       </div>
                        <Textarea 
                          rows={4} 
                          className="resize-none rounded-xl bg-background border-divider focus:ring-primary focus:border-primary font-medium text-foreground px-8 py-5"
@@ -346,22 +385,33 @@ export default function UploadPage() {
 
               {/* Confirm Button */}
               <div className="mt-10">
-                <Button 
-                   type="submit" 
-                   disabled={loading || !connected || !file}
-                   className="w-full h-16 rounded-xl bg-primary text-background font-black uppercase tracking-widest text-[11px] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-2xl shadow-primary/20"
-                >
-                   {loading ? (
-                     <div className="flex items-center gap-3">
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        <span className="animate-pulse uppercase">
-                          {step}
-                        </span>
+                {loading ? (
+                  <div className="space-y-4">
+                     <div className="flex justify-between text-[10px] font-mono font-black uppercase tracking-widest text-zinc-500">
+                        <span className="text-primary">{getProgress().label}</span>
+                        <span>Est: {getProgress().est}</span>
                      </div>
-                   ) : (
-                     "CONFIRM & DEPLOY NODE"
-                   )}
-                </Button>
+                     <div className="h-3 w-full bg-background rounded-full overflow-hidden border border-divider">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${getProgress().pct}%` }}
+                          transition={{ duration: 0.5 }}
+                          className="h-full bg-primary rounded-full shadow-[0_0_10px_rgba(34,199,184,0.5)]"
+                        />
+                     </div>
+                     <p className="text-center text-[10px] font-mono font-black text-foreground pt-2 uppercase tracking-[0.3em] animate-pulse">
+                        {getProgress().pct}% Complete
+                     </p>
+                  </div>
+                ) : (
+                  <Button 
+                     type="submit" 
+                     disabled={loading || !connected || !file}
+                     className="w-full h-16 rounded-xl bg-primary text-background font-black uppercase tracking-widest text-[11px] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-2xl shadow-primary/20"
+                  >
+                     CONFIRM & DEPLOY NODE
+                  </Button>
+                )}
                 {error && <p className="text-[10px] text-red-500 font-bold mt-4 text-center uppercase tracking-widest px-2">{error}</p>}
               </div>
            </Card>

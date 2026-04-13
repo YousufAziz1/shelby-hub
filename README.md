@@ -1,58 +1,48 @@
-# 🛡️ ShelbyHub | Decentralized Protocol Ingestion
+# ShelbyMarket
 
-**ShelbyHub** is a high-performance content marketplace and storage verification protocol built on the **Shelby Testnet (Aptos)**. It leverages decentralized blob storage to provide permanent, consensus-backed availability for premium assets including Source Code, Live Video, and institutional-grade Documents.
+> The ultimate decentralized content marketplace built on Shelby Protocol (Aptos Testnet).
 
----
+Upload your premium files, set pricing in ShelbyUSD (SUSD), and get paid instantly through on-chain micro-transactions.
 
-## 🚀 Vision
-ShelbyHub empowers creators to tokenize and settle high-value assets directly on-chain. By integrating the **Shelby Protocol**, we provide a seamless bridge between raw data ingestion and decentralized settlement using **ShelbyUSD (SUSD)**.
+## Features
 
-## 🛠 Features
-- **Node Ingestion**: Real-time broadcast of data payloads to protocol nodes.
-- **Payload Multi-Class Support**: Native support for:
-  - **Source Code**: Encrypted repository streams.
-  - **Live Media**: Immediate video broadcast ingestion.
-  - **PDF / Documents**: Deep-integrated document viewers for verified users.
-- **SUSD Settlement**: Instant peer-to-peer settlement for unlocked content.
-- **Live Previews**: Dynamic, client-side decoding and previewing of assets before protocol broadcast.
-- **Protocol Verification**: Full lineage tracking and identity verification via Aptos Wallet Adapter.
+- **Decentralized File Storage** — Files are encoded, committed on-chain, and synced to Shelby settlement nodes.
+- **SUSD Micro-Payments** — Creators earn SUSD when users like their content.
+- **AI Metadata Generator** — Auto-generate rich descriptions for your uploads.
+- **Dark Mode First** — Premium Web3 aesthetic with glassmorphism and dynamic animations.
+- **Live Search** — Filter content by keyword or uploader address.
+- **Creator Profiles** — Analytics dashboard with uploads, followers, views, likes, and SUSD earnings.
+- **Media Previews** — Auto-playing video previews, image thumbnails, and premium content gating.
+- **Smart Caching** — 30-second local cache for instant feed navigation.
 
-## ⚙️ Core Technology
-- **In-Browser Commitments**: Utilizing the `@shelby-protocol/sdk` for browser-side erasure coding and merkle root generation.
-- **Aptos Blockchain**: Leveraging Aptos for sub-second settlement and high-throughput metadata indexing.
-- **Cyber-Console UI**: A premium, high-impact aesthetic designed for protocol operators and institutional creators.
+## Tech Stack
 
-## 📦 Getting Started
+- **Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS v4
+- **Blockchain:** Aptos Testnet, Shelby Protocol SDK
+- **Wallet:** Petra Wallet Adapter
+- **Storage:** Supabase (metadata + file storage)
+- **Animations:** Framer Motion
+- **UI:** shadcn/ui, Lucide Icons
 
-### Prerequisites
-- Node.js 18+
-- [Petra Wallet](https://petra.app/) or any Aptos-compatible hardware/extension.
-- Authorized Node Identity.
+## Getting Started
 
-### Installation
 ```bash
-git clone https://github.com/YousufAziz1/shelby-hub.git
-cd shelby-hub
 npm install
-```
-
-### Configuration
-Create a `.env` file in the root directory:
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key
-```
-
-### Deployment
-```bash
-npm run build
 npm run dev
 ```
 
-## 📜 Governance & Verification
-ShelbyHub is maintained by the protocol verified admin **@Aptos_king**. All asset ingestions are subject to Shelley-standard data verification protocols and on-chain transparency.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
----
+## Environment Variables
 
-**Developed for the Shelby Protocol Ecosystem.**
-[Explore the Protocol](https://shelby-hub-peach.vercel.app) | [GitHub](https://github.com/YousufAziz1/)
+Create a `.env` file:
+
+```env
+NEXT_PUBLIC_SHELBY_NETWORK=testnet
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+## License
+
+MIT © [YousufAziz1](https://github.com/YousufAziz1)
